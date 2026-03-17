@@ -36,8 +36,9 @@ yarn-error.log*
 # vercel
 .vercel
 
-# markdown
+# markdown (except README)
 *.md
+!README.md
 
 # user data
 /data/
