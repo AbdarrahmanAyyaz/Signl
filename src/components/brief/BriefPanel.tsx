@@ -4,6 +4,7 @@ import type { Brief, BriefStatus, Signal } from '@/lib/types'
 import SignalItem from './SignalItem'
 import EmptyBrief from './EmptyBrief'
 import LoadingSpinner from '../shared/LoadingSpinner'
+import ResearchProgress from '../shared/ResearchProgress'
 
 interface BriefPanelProps {
   brief: Brief | null
@@ -104,15 +105,10 @@ export default function BriefPanel({
       {/* Content */}
       <div style={{ flex: 1, overflow: 'auto', padding: '8px 8px' }}>
         {status === 'loading' && (
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, padding: '40px 16px', textAlign: 'center' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16, padding: '32px 16px', textAlign: 'center' }}>
             <LoadingSpinner size={24} />
             <p style={{ color: 'var(--text1)', fontSize: 13, fontWeight: 500 }}>Researching your niche</p>
-            <p style={{ color: 'var(--text2)', fontSize: 12 }}>Scanning Reddit · X · LinkedIn · news</p>
-            <div style={{ width: '100%', marginTop: 8, display: 'flex', flexDirection: 'column', gap: 8 }}>
-              {[1, 2, 3].map(i => (
-                <div key={i} className="skeleton" style={{ height: 72, width: '100%', borderRadius: 12 }} />
-              ))}
-            </div>
+            <ResearchProgress />
           </div>
         )}
 

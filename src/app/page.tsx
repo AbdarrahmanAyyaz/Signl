@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import type { Brief, BriefStatus, Signal, Platform, Tone, GeneratedPost, GenerateStatus, Niche } from '@/lib/types'
 import BriefPanel from '@/components/brief/BriefPanel'
 import GeneratorPanel from '@/components/generator/GeneratorPanel'
+import ResearchProgress from '@/components/shared/ResearchProgress'
 
 // Onboarding modal for first-time setup
 function OnboardingModal({ onComplete }: { onComplete: () => void }) {
@@ -36,6 +37,51 @@ function OnboardingModal({ onComplete }: { onComplete: () => void }) {
       console.error('Onboarding error:', err)
       setSaving(false)
     }
+  }
+
+  if (saving) {
+    return (
+      <div className="modal-overlay">
+        <div
+          className="fade-in"
+          style={{
+            width: 420,
+            background: 'var(--bg2)',
+            border: '1px solid var(--border)',
+            borderRadius: 12,
+            padding: '32px 28px',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: 16,
+          }}
+        >
+          <div
+            style={{
+              width: 42,
+              height: 42,
+              borderRadius: 10,
+              background: 'linear-gradient(135deg, #fb923c, #f97316)',
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: '#0f0d0b',
+              fontSize: 18,
+              fontWeight: 700,
+            }}
+          >
+            S
+          </div>
+          <h2 style={{ fontSize: 18, fontWeight: 600, color: 'var(--text0)' }}>Setting up Signl</h2>
+          <p style={{ fontSize: 13, color: 'var(--text2)' }}>
+            Running your first research scan. This takes 15-30 seconds.
+          </p>
+          <div style={{ width: '100%', marginTop: 4 }}>
+            <ResearchProgress />
+          </div>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -110,7 +156,7 @@ function OnboardingModal({ onComplete }: { onComplete: () => void }) {
 
         <button
           onClick={handleSubmit}
-          disabled={saving || !name || !topic || !audience}
+          disabled={!name || !topic || !audience}
           style={{
             width: '100%',
             padding: '12px 16px',
@@ -121,11 +167,9 @@ function OnboardingModal({ onComplete }: { onComplete: () => void }) {
             fontSize: 14,
             fontWeight: 600,
             marginTop: 4,
-            opacity: saving ? 0.6 : 1,
-            cursor: saving ? 'not-allowed' : 'pointer',
           }}
         >
-          {saving ? 'Setting up...' : 'Set up Signl →'}
+          Set up Signl →
         </button>
       </div>
     </div>
