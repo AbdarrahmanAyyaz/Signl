@@ -8,15 +8,15 @@ const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY || '' })
 
 export async function runGeminiResearch(prompt: string): Promise<string> {
   const model = genAI.getGenerativeModel({
-    model: 'gemini-2.0-flash',
-    tools: [{ googleSearchRetrieval: {} }],
+    model: 'gemini-2.5-flash',
+    tools: [{ googleSearch: {} } as any],
   })
   const result = await model.generateContent(prompt)
   return result.response.text()
 }
 
 export async function runGeminiGenerate(systemPrompt: string, userPrompt: string): Promise<string> {
-  const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' })
+  const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' })
   const combined = systemPrompt
     ? `${systemPrompt}\n\n${userPrompt}`
     : userPrompt
@@ -56,10 +56,10 @@ export async function runClaudeGenerate(systemPrompt: string, userPrompt: string
 
 export async function runResearch(prompt: string): Promise<{ text: string; model: string }> {
   try {
-    console.log('[AI] Running research with Gemini 2.0 Flash...')
+    console.log('[AI] Running research with Gemini 2.5 Flash...')
     const text = await runGeminiResearch(prompt)
-    console.log('[AI] Research complete (model: gemini-2.0-flash)')
-    return { text, model: 'gemini-2.0-flash' }
+    console.log('[AI] Research complete (model: gemini-2.5-flash)')
+    return { text, model: 'gemini-2.5-flash' }
   } catch (err) {
     console.warn('[AI] Gemini research failed, falling back to Claude Haiku:', err)
     try {
@@ -75,10 +75,10 @@ export async function runResearch(prompt: string): Promise<{ text: string; model
 
 export async function runGenerate(systemPrompt: string, userPrompt: string): Promise<{ text: string; model: string }> {
   try {
-    console.log('[AI] Running generation with Gemini 2.0 Flash...')
+    console.log('[AI] Running generation with Gemini 2.5 Flash...')
     const text = await runGeminiGenerate(systemPrompt, userPrompt)
-    console.log('[AI] Generation complete (model: gemini-2.0-flash)')
-    return { text, model: 'gemini-2.0-flash' }
+    console.log('[AI] Generation complete (model: gemini-2.5-flash)')
+    return { text, model: 'gemini-2.5-flash' }
   } catch (err) {
     console.warn('[AI] Gemini generation failed, falling back to Claude Sonnet:', err)
     try {
