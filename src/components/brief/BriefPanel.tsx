@@ -1,0 +1,169 @@
+'use client'
+
+import type { Brief, BriefStatus, Signal } from '@/lib/types'
+import SignalItem from './SignalItem'
+import EmptyBrief from './EmptyBrief'
+import LoadingSpinner from '../shared/LoadingSpinner'
+
+interface BriefPanelProps {
+  brief: Brief | null
+  status: BriefStatus
+  nicheName?: string
+  selectedSignal: Signal | null
+  onSelectSignal: (signal: Signal) => void
+  onRefresh: () => void
+}
+
+function timeAgo(dateStr: string): string {
+  const diff = Date.now() - new Date(dateStr).getTime()
+  const mins = Math.floor(diff / 60000)
+  if (mins < 1) return 'just now'
+  if (mins < 60) return `${mins} min ago`
+  const hrs = Math.floor(mins / 60)
+  if (hrs < 24) return `${hrs}h ago`
+  const days = Math.floor(hrs / 24)
+  return `${days}d ago`
+}
+
+export default function BriefPanel({
+  brief,
+  status,
+  nicheName,
+  selectedSignal,
+  onSelectSignal,
+  onRefresh,
+}: BriefPanelProps) {
+  return (
+    <div
+      style={{
+        width: 300,
+        height: '100%',
+        borderRight: '1px solid var(--border)',
+        display: 'flex',
+        flexDirection: 'column',
+        background: 'var(--bg1)',
+        flexShrink: 0,
+      }}
+    >
+      {/* Header */}
+      <div style={{ padding: '16px 16px 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <h2 style={{ fontSize: 14, fontWeight: 600, color: 'var(--text0)' }}>Research brief</h2>
+          {status === 'ready' && (
+            <span
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 4,
+                padding: '2px 8px',
+                borderRadius: 99,
+                background: 'var(--green-soft)',
+                color: 'var(--green)',
+                fontSize: 11,
+                fontWeight: 500,
+              }}
+            >
+              <span style={{ fontSize: 6 }}>●</span> live
+            </span>
+          )}
+        </div>
+      </div>
+
+      {/* Niche bar */}
+      <div
+        style={{
+          padding: '12px 16px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          borderBottom: '1px solid var(--border)',
+        }}
+      >
+        <span className="font-mono" style={{ fontSize: 12, color: 'var(--text1)' }}>
+          {nicheName || 'No niche set'}
+        </span>
+        <button
+          onClick={onRefresh}
+          disabled={status === 'loading'}
+          style={{
+            padding: '4px 12px',
+            background: 'var(--bg3)',
+            border: '1px solid var(--border)',
+            borderRadius: 99,
+            color: 'var(--text1)',
+            fontSize: 12,
+            fontWeight: 500,
+            opacity: status === 'loading' ? 0.5 : 1,
+            cursor: status === 'loading' ? 'not-allowed' : 'pointer',
+          }}
+        >
+          {status === 'loading' ? 'Scanning...' : 'Refresh'}
+        </button>
+      </div>
+
+      {/* Content */}
+      <div style={{ flex: 1, overflow: 'auto', padding: '8px 8px' }}>
+        {status === 'loading' && (
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, padding: '40px 16px', textAlign: 'center' }}>
+            <LoadingSpinner size={24} />
+            <p style={{ color: 'var(--text1)', fontSize: 13, fontWeight: 500 }}>Researching your niche</p>
+            <p style={{ color: 'var(--text2)', fontSize: 12 }}>Scanning Reddit · X · LinkedIn · news</p>
+            <div style={{ width: '100%', marginTop: 8, display: 'flex', flexDirection: 'column', gap: 8 }}>
+              {[1, 2, 3].map(i => (
+                <div key={i} className="skeleton" style={{ height: 72, width: '100%', borderRadius: 12 }} />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {(status === 'empty' || status === 'idle') && !brief && (
+          <EmptyBrief nicheName={nicheName} onRefreshNow={onRefresh} />
+        )}
+
+        {status === 'ready' && brief && (
+          <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+            {brief.signals.map(signal => (
+              <SignalItem
+                key={signal.id}
+                signal={signal}
+                isActive={selectedSignal?.id === signal.id}
+                onClick={() => onSelectSignal(signal)}
+              />
+            ))}
+          </div>
+        )}
+
+        {status === 'error' && (
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, padding: '40px 16px', textAlign: 'center' }}>
+            <p style={{ color: 'var(--signal-high)', fontSize: 13, fontWeight: 500 }}>Failed to load brief</p>
+            <p style={{ color: 'var(--text2)', fontSize: 12 }}>Something went wrong. Try refreshing.</p>
+            <button
+              onClick={onRefresh}
+              style={{
+                marginTop: 4,
+                padding: '8px 16px',
+                background: 'transparent',
+                border: '1px solid var(--accent-border)',
+                borderRadius: 99,
+                color: 'var(--accent)',
+                fontSize: 13,
+                fontWeight: 500,
+              }}
+            >
+              Try again
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* Footer */}
+      {brief && status === 'ready' && (
+        <div style={{ padding: '10px 16px', borderTop: '1px solid var(--border)' }}>
+          <span className="font-mono" style={{ fontSize: 11, color: 'var(--text2)' }}>
+            Updated {timeAgo(brief.refreshedAt)}
+          </span>
+        </div>
+      )}
+    </div>
+  )
+}

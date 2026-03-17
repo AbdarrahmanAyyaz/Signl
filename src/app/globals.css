@@ -1,0 +1,135 @@
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap');
+@import "tailwindcss";
+
+:root {
+  --bg0: #0f0d0b;
+  --bg1: #161310;
+  --bg2: #1e1a16;
+  --bg3: #262119;
+  --bg4: #302820;
+  --border: #2c2420;
+  --border2: #3a302a;
+  --text0: #faf6f2;
+  --text1: #b5a99e;
+  --text2: #6e5f56;
+  --text3: #3d312a;
+  --accent: #fb923c;
+  --accent-soft: #fb923c14;
+  --accent-border: #fb923c32;
+  --accent-text: #fdba74;
+  --green: #4ade80;
+  --green-soft: #4ade8012;
+  --blue: #7dd3fc;
+  --signal-high: #f87171;
+  --signal-med: #fbbf24;
+  --signal-rising: #4ade80;
+}
+
+@theme inline {
+  --color-background: var(--bg0);
+  --color-foreground: var(--text0);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: 'Geist', system-ui, sans-serif;
+  background: var(--bg0);
+  color: var(--text0);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border2);
+  border-radius: 99px;
+}
+
+.font-mono {
+  font-family: 'Geist Mono', monospace;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.skeleton {
+  background: linear-gradient(90deg, var(--bg3) 25%, var(--bg4) 50%, var(--bg3) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: 8px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--border2);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.fade-in {
+  animation: fadeIn 0.2s ease-out;
+}
+
+input:focus, textarea:focus, select:focus, button:focus-visible {
+  outline: 1px solid var(--accent);
+  outline-offset: 1px;
+}
+
+input, textarea, select {
+  font-family: 'Geist', system-ui, sans-serif;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text0);
+  padding: 10px 12px;
+  font-size: 14px;
+  transition: border-color 0.15s;
+}
+input::placeholder, textarea::placeholder {
+  color: var(--text3);
+}
+input:hover, textarea:hover {
+  border-color: var(--border2);
+}
+
+button {
+  font-family: 'Geist', system-ui, sans-serif;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 13, 11, 0.8);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
