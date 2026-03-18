@@ -17,9 +17,18 @@ export const TONE_INSTRUCTIONS: Record<Tone, string> = {
     Something the reader has probably thought but never articulated.
     The setup before the question should create just enough tension that the question lands harder.`,
 
-  framework: `Name a pattern you've noticed, then break it into 4-5 concrete steps or stages.
-    The framework should feel like it was discovered, not invented.
-    End with a reframe that shifts how the reader sees the whole thing.`,
+  observation: `Write as someone who has genuinely noticed something true that most people
+    haven't named yet. Open with "Something I've noticed..." or "I keep seeing..." or a
+    specific observation stated plainly as fact. No numbered lists. No framework labels.
+    Just a sharp, specific thing you've observed — grounded in the research signal —
+    followed by why it matters. The reader should think "I've seen this too but never
+    said it out loud." Works on both X and LinkedIn. Tone: calm, curious, slightly
+    unsettling in its accuracy.
+
+    Example feel:
+    "Something I keep noticing: the founders who struggle most with consistency
+    aren't undisciplined. They just don't actually believe their work matters yet.
+    Discipline is easy when the stakes feel real."`,
 }
 
 export function buildResearchPrompt(niche: Niche): string {

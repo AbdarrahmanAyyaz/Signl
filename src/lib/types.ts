@@ -1,4 +1,4 @@
-export type Tone = 'contrarian' | 'story' | 'hottake' | 'question' | 'framework'
+export type Tone = 'contrarian' | 'story' | 'hottake' | 'question' | 'observation'
 export type Platform = 'x' | 'linkedin'
 export type SignalStrength = 'high' | 'medium' | 'rising'
 export type SourceType = 'reddit' | 'x' | 'linkedin' | 'news'

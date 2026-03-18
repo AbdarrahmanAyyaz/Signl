@@ -704,7 +704,7 @@ What app did you quit last?`}
             {
               num: '02',
               title: 'Pick a signal and tone',
-              desc: 'Select what resonates. Choose contrarian, personal story, hot take, question or framework.',
+              desc: 'Select what resonates. Choose contrarian, personal story, hot take, question or observation.',
             },
             {
               num: '03',

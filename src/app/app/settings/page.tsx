@@ -9,7 +9,7 @@ const TONE_OPTIONS: { value: Tone; label: string }[] = [
   { value: 'story', label: 'Personal story' },
   { value: 'hottake', label: 'Hot take' },
   { value: 'question', label: 'Question' },
-  { value: 'framework', label: 'Framework' },
+  { value: 'observation', label: 'Observation' },
 ]
 
 export default function SettingsPage() {

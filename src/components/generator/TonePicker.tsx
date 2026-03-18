@@ -7,10 +7,10 @@ const TONE_LABELS: Record<Tone, string> = {
   story: 'Personal story',
   hottake: 'Hot take',
   question: 'Question',
-  framework: 'Framework',
+  observation: 'Observation',
 }
 
-const ALL_TONES: Tone[] = ['contrarian', 'story', 'hottake', 'question', 'framework']
+const ALL_TONES: Tone[] = ['contrarian', 'story', 'hottake', 'question', 'observation']
 
 interface TonePickerProps {
   selected: Tone
