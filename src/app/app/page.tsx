@@ -58,22 +58,22 @@ function OnboardingModal({ onComplete }: { onComplete: () => void }) {
         >
           <div
             style={{
-              width: 42,
-              height: 42,
+              width: 40,
+              height: 40,
               borderRadius: 10,
-              background: 'linear-gradient(135deg, #fb923c, #f97316)',
+              background: 'linear-gradient(135deg, #fb923c, #ea580c)',
               display: 'inline-flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: '#0f0d0b',
-              fontSize: 14,
-              fontWeight: 700,
-              letterSpacing: '-0.5px',
+              color: '#fff',
+              fontSize: 16,
+              fontWeight: 500,
+              fontFamily: "'Geist Mono', monospace",
             }}
           >
-            OS
+            S
           </div>
-          <h2 style={{ fontSize: 18, fontWeight: 600, color: 'var(--text0)' }}>Setting up OpenSignl</h2>
+          <h2 style={{ fontSize: 18, fontWeight: 600, color: 'var(--text0)' }}>Setting up Opensignl</h2>
           <p style={{ fontSize: 13, color: 'var(--text2)' }}>
             Running your first research scan. This takes 15-30 seconds.
           </p>
@@ -103,25 +103,25 @@ function OnboardingModal({ onComplete }: { onComplete: () => void }) {
         <div style={{ textAlign: 'center', marginBottom: 4 }}>
           <div
             style={{
-              width: 42,
-              height: 42,
+              width: 40,
+              height: 40,
               borderRadius: 10,
-              background: 'linear-gradient(135deg, #fb923c, #f97316)',
+              background: 'linear-gradient(135deg, #fb923c, #ea580c)',
               display: 'inline-flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: '#0f0d0b',
-              fontSize: 14,
-              fontWeight: 700,
-              letterSpacing: '-0.5px',
+              color: '#fff',
+              fontSize: 16,
+              fontWeight: 500,
+              fontFamily: "'Geist Mono', monospace",
               marginBottom: 12,
             }}
           >
-            OS
+            S
           </div>
-          <h2 style={{ fontSize: 18, fontWeight: 600, color: 'var(--text0)' }}>Set up OpenSignl</h2>
+          <h2 style={{ fontSize: 18, fontWeight: 600, color: 'var(--text0)' }}>Welcome to Opensignl</h2>
           <p style={{ fontSize: 13, color: 'var(--text2)', marginTop: 4 }}>
-            Tell us about your niche to get started
+            Let&apos;s set up your research brief. Takes 60 seconds.
           </p>
         </div>
 
@@ -171,7 +171,7 @@ function OnboardingModal({ onComplete }: { onComplete: () => void }) {
             marginTop: 4,
           }}
         >
-          Set up OpenSignl →
+          Set up Opensignl →
         </button>
       </div>
     </div>

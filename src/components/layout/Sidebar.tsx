@@ -62,22 +62,23 @@ export default function Sidebar() {
     >
       {/* Logo */}
       <div
+        title="opensignl"
         style={{
-          width: 34,
-          height: 34,
+          width: 32,
+          height: 32,
           borderRadius: 8,
-          background: 'linear-gradient(135deg, #fb923c, #f97316)',
+          background: 'linear-gradient(135deg, #fb923c, #ea580c)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          color: '#0f0d0b',
-          fontSize: 11,
-          fontWeight: 700,
-          letterSpacing: '-0.5px',
+          color: '#fff',
+          fontSize: 14,
+          fontWeight: 500,
+          fontFamily: 'var(--font-geist-mono), "Geist Mono", monospace',
           marginBottom: 20,
         }}
       >
-        OS
+        S
       </div>
 
       {/* Nav items */}

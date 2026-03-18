@@ -121,7 +121,7 @@ export default function SettingsPage() {
 
       {/* Niche settings */}
       <section style={{ marginBottom: 40 }}>
-        <h2 style={{ fontSize: 14, fontWeight: 600, color: 'var(--text0)', marginBottom: 16 }}>
+        <h2 style={{ fontSize: 14, fontWeight: 600, color: 'var(--accent-text)', marginBottom: 16 }}>
           Niche settings
         </h2>
 
@@ -188,11 +188,11 @@ export default function SettingsPage() {
 
       {/* Voice profile */}
       <section style={{ marginBottom: 32 }}>
-        <h2 style={{ fontSize: 14, fontWeight: 600, color: 'var(--text0)', marginBottom: 4 }}>
-          Your voice — how you actually write
+        <h2 style={{ fontSize: 14, fontWeight: 600, color: 'var(--accent-text)', marginBottom: 4 }}>
+          Your voice
         </h2>
         <p style={{ fontSize: 12, color: 'var(--text2)', marginBottom: 16 }}>
-          Add 3-5 sentences you&apos;ve written that sound like you. These feed into every post generation.
+          These sentences teach Opensignl how you write. The more specific and natural, the better your posts will sound.
         </p>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>

@@ -20,9 +20,19 @@
   --green: #4ade80;
   --green-soft: #4ade8012;
   --blue: #7dd3fc;
+  --blue-soft: #7dd3fc12;
   --signal-high: #f87171;
   --signal-med: #fbbf24;
   --signal-rising: #4ade80;
+
+  /* Platform */
+  --x-col: #f5f0eb;
+  --li-col: #7dd3fc;
+
+  /* Radius */
+  --r: 12px;
+  --r-sm: 8px;
+  --r-pill: 99px;
 }
 
 @theme inline {
@@ -65,15 +75,29 @@ body {
 }
 
 @keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
 }
 .skeleton {
-  background: linear-gradient(90deg, var(--bg3) 25%, var(--bg4) 50%, var(--bg3) 75%);
-  background-size: 200% 100%;
-  animation: shimmer 1.5s ease-in-out infinite;
+  position: relative;
+  overflow: hidden;
+  background: var(--bg3);
   border-radius: 8px;
 }
+.skeleton::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.04), transparent);
+  animation: shimmer 1.5s infinite;
+}
+
+/* Live pulse dot */
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+.pulse-dot { animation: pulse-dot 2.5s ease-in-out infinite; }
 
 @keyframes spin {
   to { transform: rotate(360deg); }
@@ -84,7 +108,7 @@ body {
   border: 2px solid var(--border2);
   border-top-color: var(--accent);
   border-radius: 50%;
-  animation: spin 0.6s linear infinite;
+  animation: spin 0.9s linear infinite;
 }
 
 @keyframes fadeIn {
@@ -95,7 +119,11 @@ body {
   animation: fadeIn 0.2s ease-out;
 }
 
-input:focus, textarea:focus, select:focus, button:focus-visible {
+input:focus, textarea:focus, select:focus {
+  border-color: var(--accent-border);
+  outline: none;
+}
+button:focus-visible {
   outline: 1px solid var(--accent);
   outline-offset: 1px;
 }
@@ -103,7 +131,7 @@ input:focus, textarea:focus, select:focus, button:focus-visible {
 input, textarea, select {
   font-family: 'Geist', system-ui, sans-serif;
   background: var(--bg2);
-  border: 1px solid var(--border);
+  border: 1px solid var(--border2);
   border-radius: 8px;
   color: var(--text0);
   padding: 10px 12px;
@@ -112,9 +140,6 @@ input, textarea, select {
 }
 input::placeholder, textarea::placeholder {
   color: var(--text3);
-}
-input:hover, textarea:hover {
-  border-color: var(--border2);
 }
 
 button {

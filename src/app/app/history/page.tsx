@@ -79,8 +79,25 @@ export default function HistoryPage() {
                 background: 'var(--bg2)',
                 border: '1px solid var(--border)',
                 borderRadius: 12,
+                position: 'relative',
               }}
             >
+              {/* Watermark */}
+              <span
+                style={{
+                  position: 'absolute',
+                  top: 10,
+                  right: 14,
+                  fontFamily: "'Geist Mono', monospace",
+                  fontSize: 10,
+                  color: 'var(--text3)',
+                  userSelect: 'none',
+                  pointerEvents: 'none',
+                }}
+              >
+                opensignl
+              </span>
+
               {/* Header */}
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
                 <span
