@@ -41,7 +41,7 @@ export default function GeneratorPanel({
   }
 
   return (
-    <div style={{ flex: 1, height: '100%', display: 'flex', flexDirection: 'column', padding: '16px 24px' }}>
+    <div style={{ flex: 1, height: '100%', minHeight: 0, display: 'flex', flexDirection: 'column', padding: '16px 24px', overflow: 'hidden' }}>
       {/* Header: Generate + platform toggle */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
         <h2 style={{ fontSize: 14, fontWeight: 600, color: 'var(--text0)' }}>Generate</h2>

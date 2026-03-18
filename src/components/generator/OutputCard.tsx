@@ -76,7 +76,7 @@ export default function OutputCard({ post, status, onRegenerate }: OutputCardPro
   }
 
   return (
-    <div style={{ flex: 1, position: 'relative', display: 'flex', flexDirection: 'column' }}>
+    <div style={{ flex: 1, minHeight: 0, position: 'relative', display: 'flex', flexDirection: 'column' }}>
       {/* Loading overlay */}
       {status === 'loading' && (
         <div
@@ -102,6 +102,7 @@ export default function OutputCard({ post, status, onRegenerate }: OutputCardPro
         <div
           style={{
             flex: 1,
+            minHeight: 0,
             display: 'flex',
             flexDirection: 'column',
             gap: 16,
@@ -133,7 +134,7 @@ export default function OutputCard({ post, status, onRegenerate }: OutputCardPro
           </div>
 
           {/* Algo checks + best time */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', flexShrink: 0 }}>
             <AlgoAudit checks={post.algoChecks} />
             {post.bestPostingTime && (
               <span
@@ -155,7 +156,7 @@ export default function OutputCard({ post, status, onRegenerate }: OutputCardPro
           </div>
 
           {/* Bottom bar */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0 }}>
             <span className="font-mono" style={{ fontSize: 11, color: 'var(--text2)' }}>
               {post.charCount} chars
             </span>
