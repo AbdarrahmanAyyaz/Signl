@@ -37,9 +37,9 @@ function SettingsIcon() {
 }
 
 const NAV_ITEMS = [
-  { href: '/', icon: BriefIcon, label: 'Brief' },
-  { href: '/history', icon: CalendarIcon, label: 'History' },
-  { href: '/settings', icon: SettingsIcon, label: 'Settings' },
+  { href: '/app', icon: BriefIcon, label: 'Brief' },
+  { href: '/app/history', icon: CalendarIcon, label: 'History' },
+  { href: '/app/settings', icon: SettingsIcon, label: 'Settings' },
 ]
 
 export default function Sidebar() {
@@ -82,7 +82,9 @@ export default function Sidebar() {
 
       {/* Nav items */}
       {NAV_ITEMS.map(item => {
-        const isActive = pathname === item.href
+        const isActive = item.href === '/app'
+          ? pathname === '/app'
+          : pathname.startsWith(item.href)
         const Icon = item.icon
         return (
           <Link
