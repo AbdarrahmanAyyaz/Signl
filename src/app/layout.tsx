@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'Signl',
+  title: 'OpenSignl',
   description: 'Research-grounded social media content generator',
 }
 

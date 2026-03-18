@@ -66,13 +66,14 @@ function OnboardingModal({ onComplete }: { onComplete: () => void }) {
               alignItems: 'center',
               justifyContent: 'center',
               color: '#0f0d0b',
-              fontSize: 18,
+              fontSize: 14,
               fontWeight: 700,
+              letterSpacing: '-0.5px',
             }}
           >
-            S
+            OS
           </div>
-          <h2 style={{ fontSize: 18, fontWeight: 600, color: 'var(--text0)' }}>Setting up Signl</h2>
+          <h2 style={{ fontSize: 18, fontWeight: 600, color: 'var(--text0)' }}>Setting up OpenSignl</h2>
           <p style={{ fontSize: 13, color: 'var(--text2)' }}>
             Running your first research scan. This takes 15-30 seconds.
           </p>
@@ -110,14 +111,15 @@ function OnboardingModal({ onComplete }: { onComplete: () => void }) {
               alignItems: 'center',
               justifyContent: 'center',
               color: '#0f0d0b',
-              fontSize: 18,
+              fontSize: 14,
               fontWeight: 700,
+              letterSpacing: '-0.5px',
               marginBottom: 12,
             }}
           >
-            S
+            OS
           </div>
-          <h2 style={{ fontSize: 18, fontWeight: 600, color: 'var(--text0)' }}>Set up Signl</h2>
+          <h2 style={{ fontSize: 18, fontWeight: 600, color: 'var(--text0)' }}>Set up OpenSignl</h2>
           <p style={{ fontSize: 13, color: 'var(--text2)', marginTop: 4 }}>
             Tell us about your niche to get started
           </p>
@@ -169,7 +171,7 @@ function OnboardingModal({ onComplete }: { onComplete: () => void }) {
             marginTop: 4,
           }}
         >
-          Set up Signl →
+          Set up OpenSignl →
         </button>
       </div>
     </div>
