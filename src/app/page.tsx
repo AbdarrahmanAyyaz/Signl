@@ -163,24 +163,42 @@ export default function LandingPage() {
           </div>
 
           {/* CTA */}
-          <button
-            onClick={() => scrollTo('hero')}
-            style={{
-              background: 'var(--accent)',
-              color: '#fff',
-              fontWeight: 600,
-              fontSize: 13,
-              padding: '8px 18px',
-              borderRadius: 'var(--r-pill, 99px)',
-              border: 'none',
-              cursor: 'pointer',
-              whiteSpace: 'nowrap',
-            }}
-            onMouseEnter={e => (e.currentTarget.style.opacity = '0.88')}
-            onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
-          >
-            Get early access&nbsp;&rarr;
-          </button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <a
+              href="/app"
+              style={{
+                color: 'var(--text1)',
+                fontSize: 13,
+                fontWeight: 500,
+                textDecoration: 'none',
+                cursor: 'pointer',
+                transition: 'color 0.15s',
+                whiteSpace: 'nowrap',
+              }}
+              onMouseEnter={e => (e.currentTarget.style.color = 'var(--text0)')}
+              onMouseLeave={e => (e.currentTarget.style.color = 'var(--text1)')}
+            >
+              Open app &rarr;
+            </a>
+            <button
+              onClick={() => scrollTo('hero')}
+              style={{
+                background: 'var(--accent)',
+                color: '#fff',
+                fontWeight: 600,
+                fontSize: 13,
+                padding: '8px 18px',
+                borderRadius: 'var(--r-pill, 99px)',
+                border: 'none',
+                cursor: 'pointer',
+                whiteSpace: 'nowrap',
+              }}
+              onMouseEnter={e => (e.currentTarget.style.opacity = '0.88')}
+              onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
+            >
+              Get early access&nbsp;&rarr;
+            </button>
+          </div>
         </div>
       </nav>
 
