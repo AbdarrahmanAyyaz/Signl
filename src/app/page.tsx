@@ -1,35 +1,16 @@
 'use client'
 
-import { useState, FormEvent } from 'react'
+import { useState } from 'react'
+import { SignUpButton, useAuth } from '@clerk/nextjs'
+import Link from 'next/link'
 
 /* ------------------------------------------------------------------ */
 /*  Opensignl Landing Page                                             */
 /* ------------------------------------------------------------------ */
 
 export default function LandingPage() {
-  const [email, setEmail] = useState('')
-  const [submitted, setSubmitted] = useState(false)
-  const [submitting, setSubmitting] = useState(false)
+  const { isSignedIn } = useAuth()
   const [openFaq, setOpenFaq] = useState<number | null>(null)
-
-  async function handleWaitlist(e: FormEvent) {
-    e.preventDefault()
-    if (!email || !email.includes('@') || submitting) return
-    setSubmitting(true)
-    try {
-      await fetch('/api/waitlist', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
-      })
-      setSubmitted(true)
-    } catch {
-      // silent fail — still show success for UX
-      setSubmitted(true)
-    } finally {
-      setSubmitting(false)
-    }
-  }
 
   function scrollTo(id: string) {
     const el = document.getElementById(id)
@@ -76,9 +57,8 @@ export default function LandingPage() {
           .pricing-grid { grid-template-columns: 1fr !important; }
           .footer-inner { flex-direction: column !important; gap: 24px !important; text-align: center !important; }
           .footer-right { align-items: center !important; }
-          .hero-form-row { flex-direction: column !important; }
-          .hero-form-row input { width: 100% !important; }
-          .hero-form-row button { width: 100% !important; }
+          .social-proof-row { flex-direction: column !important; gap: 16px !important; }
+          .social-proof-row .proof-divider { display: none !important; }
         }
         @media (max-width: 480px) {
           .hero-headline { font-size: 26px !important; }
@@ -164,40 +144,58 @@ export default function LandingPage() {
 
           {/* CTA */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <a
-              href="/app"
-              style={{
-                color: 'var(--text1)',
-                fontSize: 13,
-                fontWeight: 500,
-                textDecoration: 'none',
-                cursor: 'pointer',
-                transition: 'color 0.15s',
-                whiteSpace: 'nowrap',
-              }}
-              onMouseEnter={e => (e.currentTarget.style.color = 'var(--text0)')}
-              onMouseLeave={e => (e.currentTarget.style.color = 'var(--text1)')}
-            >
-              Open app &rarr;
-            </a>
-            <button
-              onClick={() => scrollTo('hero')}
-              style={{
-                background: 'var(--accent)',
-                color: '#fff',
-                fontWeight: 600,
-                fontSize: 13,
-                padding: '8px 18px',
-                borderRadius: 'var(--r-pill, 99px)',
-                border: 'none',
-                cursor: 'pointer',
-                whiteSpace: 'nowrap',
-              }}
-              onMouseEnter={e => (e.currentTarget.style.opacity = '0.88')}
-              onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
-            >
-              Get early access&nbsp;&rarr;
-            </button>
+            {!isSignedIn ? (
+              <>
+                <Link
+                  href="/sign-in"
+                  style={{
+                    color: 'var(--text1)',
+                    fontSize: 13,
+                    fontWeight: 500,
+                    textDecoration: 'none',
+                    cursor: 'pointer',
+                    transition: 'color 0.15s',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  Sign in
+                </Link>
+                <SignUpButton mode="redirect">
+                  <button
+                    style={{
+                      background: 'var(--accent)',
+                      color: '#fff',
+                      fontWeight: 600,
+                      fontSize: 13,
+                      padding: '8px 18px',
+                      borderRadius: 'var(--r-pill, 99px)',
+                      border: 'none',
+                      cursor: 'pointer',
+                      whiteSpace: 'nowrap',
+                    }}
+                    onMouseEnter={e => (e.currentTarget.style.opacity = '0.88')}
+                    onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
+                  >
+                    Get started free&nbsp;&rarr;
+                  </button>
+                </SignUpButton>
+              </>
+            ) : (
+              <Link
+                href="/app"
+                style={{
+                  color: 'var(--text1)',
+                  fontSize: 13,
+                  fontWeight: 500,
+                  textDecoration: 'none',
+                  cursor: 'pointer',
+                  transition: 'color 0.15s',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                Open app &rarr;
+              </Link>
+            )}
           </div>
         </div>
       </nav>
@@ -240,7 +238,7 @@ export default function LandingPage() {
               animation: 'pulse-dot 2.5s ease-in-out infinite',
             }}
           />
-          Now in private beta
+          Now live &mdash; free to start
         </div>
 
         {/* Headline */}
@@ -275,84 +273,114 @@ export default function LandingPage() {
           Not AI&nbsp;slop. Real&nbsp;signal.
         </p>
 
-        {/* Email form */}
-        {!submitted ? (
-          <form
-            onSubmit={handleWaitlist}
-            className="hero-form-row"
-            style={{
-              display: 'flex',
-              gap: 10,
-              justifyContent: 'center',
-              maxWidth: 440,
-              margin: '0 auto 16px',
-            }}
-          >
-            <input
-              type="email"
-              placeholder="your@email.com"
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-              style={{
-                flex: 1,
-                background: 'var(--bg2)',
-                border: '1px solid var(--border2)',
-                borderRadius: 'var(--r-sm, 8px)',
-                padding: '12px 16px',
-                fontSize: 14,
-                color: 'var(--text0)',
-              }}
-            />
-            <button
-              type="submit"
-              disabled={submitting}
-              style={{
-                background: 'var(--accent)',
-                color: '#fff',
-                fontWeight: 600,
-                fontSize: 14,
-                padding: '12px 24px',
-                borderRadius: 'var(--r-sm, 8px)',
-                border: 'none',
-                cursor: submitting ? 'wait' : 'pointer',
-                opacity: submitting ? 0.7 : 1,
-                whiteSpace: 'nowrap',
-              }}
-            >
-              {submitting ? 'Joining...' : 'Get early access'}
-            </button>
-          </form>
-        ) : (
-          <div
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 8,
-              background: 'var(--green-soft)',
-              border: '1px solid rgba(74,222,128,0.2)',
-              borderRadius: 'var(--r-sm, 8px)',
-              padding: '12px 24px',
-              fontSize: 15,
-              fontWeight: 500,
-              color: 'var(--green)',
-              marginBottom: 16,
-            }}
-          >
-            You&apos;re on the list&nbsp;&#10003;
-          </div>
-        )}
+        {/* CTA buttons */}
+        <div style={{ marginBottom: 16 }}>
+          {!isSignedIn ? (
+            <>
+              <SignUpButton mode="redirect">
+                <button
+                  style={{
+                    background: 'var(--accent)',
+                    color: '#fff',
+                    fontWeight: 600,
+                    fontSize: 16,
+                    padding: '14px 32px',
+                    borderRadius: 'var(--r-sm, 8px)',
+                    border: 'none',
+                    cursor: 'pointer',
+                  }}
+                  onMouseEnter={e => (e.currentTarget.style.opacity = '0.88')}
+                  onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
+                >
+                  Start free &mdash; no card needed
+                </button>
+              </SignUpButton>
+              <p
+                style={{
+                  fontSize: 13,
+                  color: 'var(--text2)',
+                  marginTop: 14,
+                  ...mono,
+                }}
+              >
+                Takes 60 seconds &middot; Free plan &middot; No card required
+              </p>
+            </>
+          ) : (
+            <Link href="/app">
+              <button
+                style={{
+                  background: 'var(--accent)',
+                  color: '#fff',
+                  fontWeight: 600,
+                  fontSize: 16,
+                  padding: '14px 32px',
+                  borderRadius: 'var(--r-sm, 8px)',
+                  border: 'none',
+                  cursor: 'pointer',
+                }}
+                onMouseEnter={e => (e.currentTarget.style.opacity = '0.88')}
+                onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
+              >
+                Open Opensignl &rarr;
+              </button>
+            </Link>
+          )}
+        </div>
 
-        {/* Social proof */}
-        <p
+        {/* Social proof — product facts */}
+        <div
+          className="social-proof-row"
           style={{
-            fontSize: 13,
-            color: 'var(--text2)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 24,
+            marginTop: 32,
             ...mono,
           }}
         >
-          Free to start&nbsp;&middot;&nbsp;
-          <span style={{ color: 'var(--text1)' }}>847 founders on the waitlist</span>
-        </p>
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--text0)' }}>X + LinkedIn</div>
+            <div style={{ fontSize: 12, color: 'var(--text2)', marginTop: 4 }}>platforms supported</div>
+          </div>
+          <div
+            className="proof-divider"
+            style={{
+              width: 1,
+              height: 32,
+              background: 'var(--border)',
+            }}
+          />
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--text0)' }}>&lt;60s</div>
+            <div style={{ fontSize: 12, color: 'var(--text2)', marginTop: 4 }}>research to post</div>
+          </div>
+          <div
+            className="proof-divider"
+            style={{
+              width: 1,
+              height: 32,
+              background: 'var(--border)',
+            }}
+          />
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--text0)' }}>$0</div>
+            <div style={{ fontSize: 12, color: 'var(--text2)', marginTop: 4 }}>to start</div>
+          </div>
+          <div
+            className="proof-divider"
+            style={{
+              width: 1,
+              height: 32,
+              background: 'var(--border)',
+            }}
+          />
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--text0)' }}>5 signals</div>
+            <div style={{ fontSize: 12, color: 'var(--text2)', marginTop: 4 }}>every morning</div>
+          </div>
+        </div>
       </section>
 
       {/* ============================================================ */}
@@ -791,22 +819,11 @@ What app did you quit last?`}
             fontWeight: 700,
             letterSpacing: '-0.02em',
             textAlign: 'center',
-            marginBottom: 12,
+            marginBottom: 48,
           }}
         >
           Simple pricing
         </h2>
-        <p
-          style={{
-            fontSize: 15,
-            color: 'var(--text2)',
-            textAlign: 'center',
-            marginBottom: 48,
-            ...mono,
-          }}
-        >
-          Save 20% annually
-        </p>
 
         <div
           className="pricing-grid"
@@ -863,6 +880,7 @@ What app did you quit last?`}
                 '5 posts / month',
                 '3 research briefs / month',
                 'X + LinkedIn',
+                'Voice profile',
               ].map((item, i) => (
                 <li
                   key={i}
@@ -881,24 +899,47 @@ What app did you quit last?`}
               ))}
             </ul>
 
-            <button
-              onClick={() => scrollTo('hero')}
-              style={{
-                background: 'transparent',
-                border: '1px solid var(--border2)',
-                borderRadius: 'var(--r-sm, 8px)',
-                color: 'var(--text0)',
-                fontWeight: 600,
-                fontSize: 14,
-                padding: '10px 0',
-                cursor: 'pointer',
-                width: '100%',
-              }}
-              onMouseEnter={e => (e.currentTarget.style.background = 'var(--bg3)')}
-              onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
-            >
-              Get started free
-            </button>
+            {!isSignedIn ? (
+              <SignUpButton mode="redirect">
+                <button
+                  style={{
+                    background: 'transparent',
+                    border: '1px solid var(--border2)',
+                    borderRadius: 'var(--r-sm, 8px)',
+                    color: 'var(--text0)',
+                    fontWeight: 600,
+                    fontSize: 14,
+                    padding: '10px 0',
+                    cursor: 'pointer',
+                    width: '100%',
+                  }}
+                  onMouseEnter={e => (e.currentTarget.style.background = 'var(--bg3)')}
+                  onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                >
+                  Start for free
+                </button>
+              </SignUpButton>
+            ) : (
+              <Link href="/app" style={{ textDecoration: 'none' }}>
+                <button
+                  style={{
+                    background: 'transparent',
+                    border: '1px solid var(--border2)',
+                    borderRadius: 'var(--r-sm, 8px)',
+                    color: 'var(--text0)',
+                    fontWeight: 600,
+                    fontSize: 14,
+                    padding: '10px 0',
+                    cursor: 'pointer',
+                    width: '100%',
+                  }}
+                  onMouseEnter={e => (e.currentTarget.style.background = 'var(--bg3)')}
+                  onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                >
+                  Open Opensignl
+                </button>
+              </Link>
+            )}
             <p
               style={{
                 fontSize: 12,
@@ -977,8 +1018,9 @@ What app did you quit last?`}
                 'Daily auto-brief at 7 am',
                 'Content calendar',
                 'Google Calendar sync',
-                'Voice profile',
-                'Post history',
+                'Account intelligence',
+                'Post history + export',
+                'Priority support',
               ].map((item, i) => (
                 <li
                   key={i}
@@ -997,24 +1039,47 @@ What app did you quit last?`}
               ))}
             </ul>
 
-            <button
-              onClick={() => scrollTo('hero')}
-              style={{
-                background: 'var(--accent)',
-                color: '#fff',
-                fontWeight: 600,
-                fontSize: 14,
-                padding: '10px 0',
-                borderRadius: 'var(--r-sm, 8px)',
-                border: 'none',
-                cursor: 'pointer',
-                width: '100%',
-              }}
-              onMouseEnter={e => (e.currentTarget.style.opacity = '0.88')}
-              onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
-            >
-              Start Pro&nbsp;&mdash;&nbsp;$19/mo
-            </button>
+            {!isSignedIn ? (
+              <SignUpButton mode="redirect">
+                <button
+                  style={{
+                    background: 'var(--accent)',
+                    color: '#fff',
+                    fontWeight: 600,
+                    fontSize: 14,
+                    padding: '10px 0',
+                    borderRadius: 'var(--r-sm, 8px)',
+                    border: 'none',
+                    cursor: 'pointer',
+                    width: '100%',
+                  }}
+                  onMouseEnter={e => (e.currentTarget.style.opacity = '0.88')}
+                  onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
+                >
+                  Start Pro&nbsp;&mdash;&nbsp;$19/mo
+                </button>
+              </SignUpButton>
+            ) : (
+              <Link href="/app" style={{ textDecoration: 'none' }}>
+                <button
+                  style={{
+                    background: 'var(--accent)',
+                    color: '#fff',
+                    fontWeight: 600,
+                    fontSize: 14,
+                    padding: '10px 0',
+                    borderRadius: 'var(--r-sm, 8px)',
+                    border: 'none',
+                    cursor: 'pointer',
+                    width: '100%',
+                  }}
+                  onMouseEnter={e => (e.currentTarget.style.opacity = '0.88')}
+                  onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
+                >
+                  Open Opensignl &rarr;
+                </button>
+              </Link>
+            )}
           </div>
         </div>
       </section>
@@ -1048,15 +1113,15 @@ What app did you quit last?`}
           },
           {
             q: 'Will it sound like me?',
-            a: "Yes, if you fill in your voice profile. Add 3\u20135 sentences in your actual writing style and every generated post will mirror your voice, not generic AI.",
+            a: "Yes, if you fill in your voice profile and connect your social accounts. Opensignl analyses your actual posts to match your writing patterns \u2014 not just a generic description of your voice.",
           },
           {
             q: 'Which platforms does it support?',
-            a: 'X (Twitter) and LinkedIn in v1. Threads and newsletter coming in v2.',
+            a: 'X (Twitter) and LinkedIn. Threads and newsletter support coming soon.',
           },
           {
-            q: 'How much does it cost to run?',
-            a: "The Free plan is genuinely free \u2014 5 posts and 3 research briefs a month at no cost. Pro is $19/month for unlimited usage with daily automated briefs.",
+            q: "What's on the free plan?",
+            a: "5 generated posts and 3 research briefs per month. No card required. Upgrade to Pro anytime for unlimited usage and daily automated briefs.",
           },
         ].map((item, i) => (
           <div
@@ -1161,6 +1226,16 @@ What app did you quit last?`}
               <br />
               for founders.
             </div>
+            <div
+              style={{
+                fontSize: 12,
+                color: 'var(--text3)',
+                marginTop: 12,
+                ...mono,
+              }}
+            >
+              &copy; 2026 Opensignl. Built in public.
+            </div>
           </div>
 
           {/* Right */}
@@ -1207,15 +1282,17 @@ What app did you quit last?`}
               >
                 GitHub
               </a>
-            </div>
-            <div
-              style={{
-                fontSize: 12,
-                color: 'var(--text3)',
-                ...mono,
-              }}
-            >
-              &copy; 2026 Opensignl. Built in public.
+              <Link
+                href="/sign-in"
+                style={{
+                  color: 'var(--text1)',
+                  textDecoration: 'none',
+                  cursor: 'pointer',
+                  transition: 'color 0.15s',
+                }}
+              >
+                Sign in
+              </Link>
             </div>
           </div>
         </div>

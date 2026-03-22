@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
+import { auth } from '@clerk/nextjs/server'
 import { v4 as uuid } from 'uuid'
-import { getNicheConfig, getActiveNiche, getLatestBrief, saveBrief } from '@/lib/storage'
+import { getNicheConfig, getActiveNiche, getLatestBrief, saveBrief, getUserUsage, incrementUsage } from '@/lib/storage'
 import { runResearch } from '@/lib/ai'
 import { buildResearchPrompt } from '@/lib/prompts'
 import { extractJSON } from '@/lib/json'
@@ -8,13 +9,16 @@ import type { Brief, Signal, SignalStrength, SourceType } from '@/lib/types'
 
 export async function GET() {
   try {
-    const config = getNicheConfig()
+    const { userId } = await auth()
+    if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+    const config = await getNicheConfig()
     if (!config) return NextResponse.json({ brief: null })
 
     const niche = getActiveNiche(config)
     if (!niche) return NextResponse.json({ brief: null })
 
-    const brief = getLatestBrief(niche.id)
+    const brief = await getLatestBrief(niche.id)
     return NextResponse.json({ brief })
   } catch (err) {
     console.error('[API] GET /api/research error:', err)
@@ -24,8 +28,21 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
+    const { userId } = await auth()
+    if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+    // Check usage limits for free plan
+    const usage = await getUserUsage()
+    if (usage.plan === 'free' && usage.briefsGenerated >= 3) {
+      return NextResponse.json({
+        error: 'Free plan limit reached',
+        upgradeUrl: '/app/settings?upgrade=true',
+        limit: 3,
+      }, { status: 402 })
+    }
+
     const body = await request.json().catch(() => ({}))
-    const config = getNicheConfig()
+    const config = await getNicheConfig()
     if (!config) {
       return NextResponse.json({ error: 'No niche configured' }, { status: 400 })
     }
@@ -84,7 +101,20 @@ export async function POST(request: Request) {
       refreshedAt: now,
     }
 
-    saveBrief(brief)
+    await saveBrief(brief)
+    await incrementUsage('briefsGenerated')
+
+    // Trigger profile scrape if handles exist
+    if (niche.xHandle || niche.linkedinHandle) {
+      try {
+        fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/profile`, {
+          method: 'POST',
+        })
+      } catch {
+        // Non-fatal
+      }
+    }
+
     return NextResponse.json({ brief })
   } catch (err) {
     console.error('[API] POST /api/research error:', err)

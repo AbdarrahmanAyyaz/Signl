@@ -13,8 +13,46 @@ export interface Niche {
   audience: string
   voiceExamples: string[]
   toneDefault: Tone
+  xHandle?: string          // without @ — e.g. "abdarrahmanayyaz"
+  linkedinHandle?: string   // profile slug — e.g. "abdarrahman-ayyaz"
   createdAt: string
   updatedAt: string
+}
+
+export interface AccountIntelligence {
+  nicheId: string
+  xProfile?: {
+    handle: string
+    recentPosts: {
+      content: string
+      replies: number
+      reposts: number
+      likes: number
+      postedAt: string
+    }[]
+    topTopics: string[]
+    writingPatterns: string[]
+    topPerformingPost: string
+    avgEngagement: number
+    topicsToAvoid: string[]
+    audienceSignals: string[]
+  }
+  linkedinProfile?: {
+    handle: string
+    recentPosts: {
+      content: string
+      reactions: number
+      comments: number
+      postedAt: string
+    }[]
+    topTopics: string[]
+    writingPatterns: string[]
+    topPerformingPost: string
+    avgEngagement: number
+    topicsToAvoid: string[]
+    audienceSignals: string[]
+  }
+  scrapedAt: string
 }
 
 export interface NicheConfig {

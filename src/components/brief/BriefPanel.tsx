@@ -1,6 +1,6 @@
 'use client'
 
-import type { Brief, BriefStatus, Signal } from '@/lib/types'
+import type { Brief, BriefStatus, Signal, AccountIntelligence } from '@/lib/types'
 import SignalItem from './SignalItem'
 import EmptyBrief from './EmptyBrief'
 import LoadingSpinner from '../shared/LoadingSpinner'
@@ -13,6 +13,7 @@ interface BriefPanelProps {
   selectedSignal: Signal | null
   onSelectSignal: (signal: Signal) => void
   onRefresh: () => void
+  accountIntel?: AccountIntelligence | null
 }
 
 function timeAgo(dateStr: string): string {
@@ -33,6 +34,7 @@ export default function BriefPanel({
   selectedSignal,
   onSelectSignal,
   onRefresh,
+  accountIntel,
 }: BriefPanelProps) {
   return (
     <div
@@ -101,6 +103,22 @@ export default function BriefPanel({
           {status === 'loading' ? 'Scanning...' : 'Refresh'}
         </button>
       </div>
+
+      {/* Account intelligence indicator */}
+      {accountIntel && (
+        <div style={{ padding: '6px 12px', fontFamily: 'var(--mono)', fontSize: 10, color: 'var(--text2)', background: 'var(--bg0)', borderBottom: '1px solid var(--border)' }}>
+          {accountIntel.xProfile && (
+            <span>X analysed · {accountIntel.xProfile.recentPosts.length} posts</span>
+          )}
+          {accountIntel.xProfile && accountIntel.linkedinProfile && <span> · </span>}
+          {accountIntel.linkedinProfile && (
+            <span>LinkedIn analysed · {accountIntel.linkedinProfile.recentPosts.length} posts</span>
+          )}
+          <span style={{ marginLeft: 8, opacity: 0.6 }}>
+            Updated {new Date(accountIntel.scrapedAt).toLocaleDateString()}
+          </span>
+        </div>
+      )}
 
       {/* Content */}
       <div style={{ flex: 1, overflow: 'auto', padding: '8px 8px' }}>

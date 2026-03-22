@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { UserButton } from '@clerk/nextjs'
 
 // SVG icons for sidebar nav
 function BriefIcon() {
@@ -109,6 +110,28 @@ export default function Sidebar() {
           </Link>
         )
       })}
+
+      {/* Spacer */}
+      <div style={{ flex: 1 }} />
+
+      {/* User avatar */}
+      <div style={{ paddingBottom: 16 }}>
+        <UserButton
+          appearance={{
+            variables: {
+              colorPrimary: '#fb923c',
+              colorBackground: '#262119',
+            },
+            elements: {
+              avatarBox: {
+                width: '30px',
+                height: '30px',
+                borderRadius: '50%',
+              },
+            },
+          }}
+        />
+      </div>
     </aside>
   )
 }

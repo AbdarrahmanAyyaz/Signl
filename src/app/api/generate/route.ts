@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
+import { auth } from '@clerk/nextjs/server'
 import { v4 as uuid } from 'uuid'
-import { getNicheConfig, getActiveNiche, savePost } from '@/lib/storage'
+import { getNicheConfig, getActiveNiche, getAccountIntelligence, savePost, getUserUsage, incrementUsage } from '@/lib/storage'
 import { runGenerate } from '@/lib/ai'
 import { buildPostPrompt } from '@/lib/prompts'
 import { extractJSON } from '@/lib/json'
@@ -8,6 +9,19 @@ import type { GenerateRequest, GeneratedPost, Signal } from '@/lib/types'
 
 export async function POST(request: Request) {
   try {
+    const { userId } = await auth()
+    if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+    // Check usage limits for free plan
+    const usage = await getUserUsage()
+    if (usage.plan === 'free' && usage.postsGenerated >= 5) {
+      return NextResponse.json({
+        error: 'Free plan limit reached',
+        upgradeUrl: '/app/settings?upgrade=true',
+        limit: 5,
+      }, { status: 402 })
+    }
+
     const body: GenerateRequest = await request.json()
     const { signalId, signalTitle, signalSummary, signalQuote, platform, tone, direction, nicheId } = body
 
@@ -15,7 +29,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Missing required fields: signalId, platform, tone' }, { status: 400 })
     }
 
-    const config = getNicheConfig()
+    const config = await getNicheConfig()
     if (!config) {
       return NextResponse.json({ error: 'No niche configured' }, { status: 400 })
     }
@@ -36,7 +50,8 @@ export async function POST(request: Request) {
       engagementNote: '',
     }
 
-    const prompt = buildPostPrompt(platform, niche, signal, tone, direction)
+    const accountIntel = await getAccountIntelligence(niche.id) ?? undefined
+    const prompt = buildPostPrompt(platform, niche, signal, tone, direction, accountIntel)
     const { text, model } = await runGenerate('', prompt)
     console.log(`[API] Generation completed using ${model}`)
 
@@ -63,7 +78,8 @@ export async function POST(request: Request) {
       createdAt: new Date().toISOString(),
     }
 
-    savePost(post)
+    await savePost(post)
+    await incrementUsage('postsGenerated')
     return NextResponse.json({ post })
   } catch (err) {
     console.error('[API] POST /api/generate error:', err)

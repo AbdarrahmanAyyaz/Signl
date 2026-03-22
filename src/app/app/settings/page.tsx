@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import type { Niche, Tone } from '@/lib/types'
+import type { Niche, Tone, AccountIntelligence } from '@/lib/types'
 import NicheChangeModal from '@/components/shared/NicheChangeModal'
 
 const TONE_OPTIONS: { value: Tone; label: string }[] = [
@@ -18,7 +18,10 @@ export default function SettingsPage() {
   const [audience, setAudience] = useState('')
   const [toneDefault, setToneDefault] = useState<Tone>('contrarian')
   const [voiceExamples, setVoiceExamples] = useState<string[]>(['', '', '', '', ''])
+  const [xHandle, setXHandle] = useState('')
+  const [linkedinHandle, setLinkedinHandle] = useState('')
   const [originalNiche, setOriginalNiche] = useState<Niche | null>(null)
+  const [accountIntel, setAccountIntel] = useState<AccountIntelligence | null>(null)
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
   const [showModal, setShowModal] = useState(false)
@@ -38,10 +41,20 @@ export default function SettingsPage() {
           setTopic(active.topic)
           setAudience(active.audience)
           setToneDefault(active.toneDefault)
+          setXHandle(active.xHandle || '')
+          setLinkedinHandle(active.linkedinHandle || '')
           const voices = [...(active.voiceExamples || [])]
           while (voices.length < 5) voices.push('')
           setVoiceExamples(voices)
         }
+      }
+      // Fetch account intelligence
+      try {
+        const intelRes = await fetch('/api/profile')
+        const intelData = await intelRes.json()
+        if (intelData.intel) setAccountIntel(intelData.intel)
+      } catch {
+        // Non-fatal
       }
     }
     load()
@@ -61,6 +74,8 @@ export default function SettingsPage() {
             audience,
             voiceExamples: voiceExamples.filter(v => v.trim()),
             toneDefault,
+            xHandle: xHandle || undefined,
+            linkedinHandle: linkedinHandle || undefined,
           },
           refreshNow: false,
         }),
@@ -184,6 +199,71 @@ export default function SettingsPage() {
             </div>
           </div>
         </div>
+      </section>
+
+      {/* Your accounts */}
+      <section style={{ marginBottom: 40 }}>
+        <h2 style={{ fontSize: 14, fontWeight: 600, color: 'var(--accent-text)', marginBottom: 4 }}>
+          Your accounts
+        </h2>
+        <p style={{ fontSize: 12, color: 'var(--text2)', marginBottom: 16 }}>
+          Opensignl analyses your public posts to write in continuity with your
+          existing content — matching your style, avoiding topics you&apos;ve covered,
+          and targeting what your audience responds to.
+        </p>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <div>
+            <label style={{ fontSize: 12, color: 'var(--text1)', display: 'block', marginBottom: 6 }}>
+              X (Twitter) handle
+            </label>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 0 }}>
+              <span style={{ padding: '8px 10px', background: 'var(--bg3)', border: '1px solid var(--border)', borderRight: 'none', borderRadius: '6px 0 0 6px', fontSize: 13, color: 'var(--text2)', whiteSpace: 'nowrap' }}>@</span>
+              <input
+                value={xHandle}
+                onChange={e => setXHandle(e.target.value.replace('@', '').trim())}
+                placeholder="yourhandle"
+                style={{ width: '100%', borderRadius: '0 6px 6px 0' }}
+              />
+            </div>
+          </div>
+
+          <div>
+            <label style={{ fontSize: 12, color: 'var(--text1)', display: 'block', marginBottom: 6 }}>
+              LinkedIn profile slug
+            </label>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 0 }}>
+              <span style={{ padding: '8px 10px', background: 'var(--bg3)', border: '1px solid var(--border)', borderRight: 'none', borderRadius: '6px 0 0 6px', fontSize: 13, color: 'var(--text2)', whiteSpace: 'nowrap' }}>linkedin.com/in/</span>
+              <input
+                value={linkedinHandle}
+                onChange={e => setLinkedinHandle(e.target.value.trim())}
+                placeholder="your-name"
+                style={{ width: '100%', borderRadius: '0 6px 6px 0' }}
+              />
+            </div>
+          </div>
+        </div>
+
+        {accountIntel && (
+          <p style={{ fontSize: 12, color: 'var(--text2)', marginTop: 12, display: 'flex', alignItems: 'center', gap: 8 }}>
+            Last analysed: {new Date(accountIntel.scrapedAt).toLocaleDateString()}
+            <button
+              onClick={() => fetch('/api/profile', { method: 'POST' }).then(() => window.location.reload())}
+              style={{
+                padding: '4px 12px',
+                background: 'transparent',
+                border: '1px solid var(--border)',
+                borderRadius: 99,
+                color: 'var(--text1)',
+                fontSize: 12,
+                fontWeight: 500,
+                cursor: 'pointer',
+              }}
+            >
+              Re-analyse now
+            </button>
+          </p>
+        )}
       </section>
 
       {/* Voice profile */}

@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { auth } from '@clerk/nextjs/server'
 import { getNicheConfig, saveNicheConfig } from '@/lib/storage'
 import type { Niche, NicheConfig } from '@/lib/types'
 
@@ -13,7 +14,10 @@ function generateSlug(topic: string): string {
 
 export async function GET() {
   try {
-    const config = getNicheConfig()
+    const { userId } = await auth()
+    if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+    const config = await getNicheConfig()
     return NextResponse.json({ config })
   } catch (err) {
     console.error('[API] GET /api/niche error:', err)
@@ -23,11 +27,14 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
+    const { userId } = await auth()
+    if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
     const body = await request.json()
     const { niche: nicheData, refreshNow } = body as { niche: Partial<Niche>; refreshNow: boolean }
 
     const now = new Date().toISOString()
-    let config = getNicheConfig()
+    let config = await getNicheConfig()
 
     const nicheId = nicheData.id || generateSlug(nicheData.topic || nicheData.name || 'default')
 
@@ -38,6 +45,8 @@ export async function POST(request: Request) {
       audience: nicheData.audience || '',
       voiceExamples: nicheData.voiceExamples || [],
       toneDefault: nicheData.toneDefault || 'contrarian',
+      xHandle: nicheData.xHandle || undefined,
+      linkedinHandle: nicheData.linkedinHandle || undefined,
       createdAt: now,
       updatedAt: now,
     }
@@ -58,7 +67,7 @@ export async function POST(request: Request) {
       }
     }
 
-    saveNicheConfig(config)
+    await saveNicheConfig(config)
     return NextResponse.json({ config, nicheId, refreshNow })
   } catch (err) {
     console.error('[API] POST /api/niche error:', err)
