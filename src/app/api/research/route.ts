@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server'
 import { auth } from '@clerk/nextjs/server'
 import { v4 as uuid } from 'uuid'
-import { getNicheConfig, getActiveNiche, getLatestBrief, saveBrief, getUserUsage, incrementUsage } from '@/lib/storage'
+import { getNicheConfig, getActiveNiche, getLatestBrief, saveBrief, getUserUsage, checkBriefLimit, incrementBriefUsage } from '@/lib/storage'
+import { LIMITS } from '@/lib/constants'
 import { runResearch } from '@/lib/ai'
 import { buildResearchPrompt } from '@/lib/prompts'
 import { extractJSON } from '@/lib/json'
@@ -31,13 +32,14 @@ export async function POST(request: Request) {
     const { userId } = await auth()
     if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-    // Check usage limits for free plan
+    // Check usage limits
     const usage = await getUserUsage()
-    if (usage.plan === 'free' && usage.briefsGenerated >= 3) {
+    if (!checkBriefLimit(usage)) {
       return NextResponse.json({
-        error: 'Free plan limit reached',
-        upgradeUrl: '/app/settings?upgrade=true',
-        limit: 3,
+        error: 'Daily brief limit reached',
+        limit: LIMITS.free.briefsPerDay,
+        message: 'Free plan includes 2 research briefs per day. Upgrade to Pro for unlimited daily auto-briefs.',
+        upgradeUrl: '/app/settings#upgrade',
       }, { status: 402 })
     }
 
@@ -102,7 +104,7 @@ export async function POST(request: Request) {
     }
 
     await saveBrief(brief)
-    await incrementUsage('briefsGenerated')
+    await incrementBriefUsage()
 
     // Trigger profile scrape if handles exist
     if (niche.xHandle || niche.linkedinHandle) {

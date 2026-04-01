@@ -1,7 +1,9 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import type { Niche, Tone, AccountIntelligence } from '@/lib/types'
+import type { Niche, Tone, AccountIntelligence, UsageRecord } from '@/lib/types'
+import { LIMITS } from '@/lib/constants'
+import { COPY } from '@/lib/copy'
 import NicheChangeModal from '@/components/shared/NicheChangeModal'
 
 const TONE_OPTIONS: { value: Tone; label: string }[] = [
@@ -26,6 +28,9 @@ export default function SettingsPage() {
   const [saved, setSaved] = useState(false)
   const [showModal, setShowModal] = useState(false)
   const [pendingNicheId, setPendingNicheId] = useState<string | null>(null)
+  const [usage, setUsage] = useState<UsageRecord | null>(null)
+  const [upgradeMessage, setUpgradeMessage] = useState('')
+  const [upgradeStatus, setUpgradeStatus] = useState<'idle' | 'loading' | 'sent' | 'error'>('idle')
 
   useEffect(() => {
     async function load() {
@@ -53,6 +58,14 @@ export default function SettingsPage() {
         const intelRes = await fetch('/api/profile')
         const intelData = await intelRes.json()
         if (intelData.intel) setAccountIntel(intelData.intel)
+      } catch {
+        // Non-fatal
+      }
+      // Fetch usage
+      try {
+        const usageRes = await fetch('/api/usage')
+        const usageData = await usageRes.json()
+        if (usageData.usage) setUsage(usageData.usage)
       } catch {
         // Non-fatal
       }
@@ -128,11 +141,169 @@ export default function SettingsPage() {
     setVoiceExamples(updated)
   }
 
+  const handleUpgradeSubmit = async () => {
+    setUpgradeStatus('loading')
+    try {
+      const res = await fetch('/api/upgrade', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: upgradeMessage }),
+      })
+      if (res.ok) {
+        setUpgradeStatus('sent')
+      } else {
+        setUpgradeStatus('error')
+      }
+    } catch {
+      setUpgradeStatus('error')
+    }
+  }
+
   return (
     <div style={{ flex: 1, overflow: 'auto', padding: '32px 40px', maxWidth: 640 }}>
       <h1 style={{ fontSize: 18, fontWeight: 600, color: 'var(--text0)', marginBottom: 24 }}>
         Settings
       </h1>
+
+      {/* Your plan section */}
+      <section id="upgrade" style={{ marginBottom: 40 }}>
+        <h2 style={{ fontSize: 14, fontWeight: 600, color: 'var(--accent-text)', marginBottom: 16 }}>
+          Your plan
+        </h2>
+
+        {usage?.plan === 'pro' ? (
+          <div style={{
+            background: 'var(--bg2)',
+            border: '1px solid var(--border)',
+            borderRadius: 'var(--r)',
+            padding: 20,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 12,
+          }}>
+            <span
+              className="font-mono"
+              style={{
+                fontSize: 11,
+                fontWeight: 500,
+                padding: '3px 10px',
+                borderRadius: 'var(--r-pill)',
+                background: 'var(--accent-soft)',
+                border: '1px solid var(--accent-border)',
+                color: 'var(--accent-text)',
+                flexShrink: 0,
+              }}
+            >
+              Pro
+            </span>
+            <p style={{ fontSize: 12, color: 'var(--text1)' }}>
+              Unlimited posts · Daily auto-brief · Everything
+            </p>
+          </div>
+        ) : upgradeStatus === 'sent' ? (
+          <div style={{
+            background: 'var(--bg2)',
+            border: '1px solid var(--border)',
+            borderRadius: 'var(--r)',
+            padding: '28px 20px',
+            textAlign: 'center',
+          }}>
+            <div style={{ fontSize: 20, color: 'var(--green)', marginBottom: 10 }}>✓</div>
+            <h3 style={{ fontSize: 14, fontWeight: 500, color: 'var(--text0)', marginBottom: 6 }}>
+              Request sent
+            </h3>
+            <p style={{ fontSize: 12, color: 'var(--text1)', lineHeight: 1.6 }}>
+              Check your email — you'll hear back within a few hours with
+              a payment link to activate Pro.
+            </p>
+          </div>
+        ) : (
+          <div style={{
+            background: 'var(--bg2)',
+            border: '1px solid var(--border)',
+            borderRadius: 'var(--r)',
+            padding: 20,
+          }}>
+            <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 14 }}>
+              <span className="font-mono" style={{ fontSize: 12, color: 'var(--text1)' }}>Free</span>
+              <span className="font-mono" style={{ fontSize: 22, fontWeight: 600, color: 'var(--text0)', letterSpacing: '-0.02em' }}>
+                $19<span style={{ fontSize: 13, fontWeight: 400, color: 'var(--text2)' }}>/mo</span>
+              </span>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 16 }}>
+              <div className="font-mono" style={{ fontSize: 12, color: 'var(--text1)', display: 'flex', gap: 8 }}>
+                <span style={{ color: 'var(--text2)', width: 140 }}>Research briefs</span>
+                <span>{LIMITS.free.briefsPerDay} per day</span>
+              </div>
+              <div className="font-mono" style={{ fontSize: 12, color: 'var(--text1)', display: 'flex', gap: 8 }}>
+                <span style={{ color: 'var(--text2)', width: 140 }}>Posts</span>
+                <span>{LIMITS.free.postsPerMonth} per month</span>
+              </div>
+            </div>
+
+            <p style={{ fontSize: 12, color: 'var(--text1)', lineHeight: 1.6, marginBottom: 12 }}>
+              Pro includes unlimited posts, daily auto-briefs at 7am, content calendar,
+              Google Calendar sync, and account intelligence — $19/month.
+            </p>
+
+            <p
+              className="font-mono"
+              style={{
+                fontSize: 11,
+                color: 'var(--accent-text)',
+                fontStyle: 'italic',
+                marginBottom: 16,
+              }}
+            >
+              {COPY.limits.planIntro.fomo}
+            </p>
+
+            <textarea
+              placeholder="Anything you'd like me to know? (optional)"
+              value={upgradeMessage}
+              onChange={e => setUpgradeMessage(e.target.value)}
+              rows={2}
+              style={{
+                width: '100%',
+                background: 'var(--bg1)',
+                border: '1px solid var(--border2)',
+                borderRadius: 'var(--r-sm)',
+                padding: '9px 12px',
+                fontSize: 12,
+                color: 'var(--text0)',
+                resize: 'none',
+                marginBottom: 12,
+              }}
+            />
+
+            <button
+              onClick={handleUpgradeSubmit}
+              disabled={upgradeStatus === 'loading'}
+              style={{
+                width: '100%',
+                padding: '10px 20px',
+                background: 'var(--accent)',
+                color: '#0f0d0b',
+                border: 'none',
+                borderRadius: 'var(--r-sm)',
+                fontSize: 13,
+                fontWeight: 600,
+                opacity: upgradeStatus === 'loading' ? 0.6 : 1,
+                cursor: upgradeStatus === 'loading' ? 'not-allowed' : 'pointer',
+              }}
+            >
+              {upgradeStatus === 'loading' ? 'Sending...' : 'Upgrade to Pro — $19/mo →'}
+            </button>
+
+            {upgradeStatus === 'error' && (
+              <p className="font-mono" style={{ fontSize: 11, color: 'var(--signal-high)', marginTop: 8 }}>
+                Something went wrong. Email me directly at hello@opensignl.com
+              </p>
+            )}
+          </div>
+        )}
+      </section>
 
       {/* Niche settings */}
       <section style={{ marginBottom: 40 }}>

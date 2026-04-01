@@ -1,9 +1,11 @@
 'use client'
 
 import { useState } from 'react'
-import type { Signal, Platform, Tone, GeneratedPost, GenerateStatus } from '@/lib/types'
+import type { Signal, Platform, Tone, GeneratedPost, GenerateStatus, UsageRecord } from '@/lib/types'
 import TonePicker from './TonePicker'
 import OutputCard from './OutputCard'
+import ShortcutsHelp from '../shared/ShortcutsHelp'
+import PlanChip from '../shared/PlanChip'
 
 interface GeneratorPanelProps {
   selectedSignal: Signal | null
@@ -14,6 +16,8 @@ interface GeneratorPanelProps {
   post: GeneratedPost | null
   generateStatus: GenerateStatus
   onGenerate: (direction: string) => void
+  postLimitHit?: boolean
+  usage?: UsageRecord | null
 }
 
 export default function GeneratorPanel({
@@ -25,6 +29,8 @@ export default function GeneratorPanel({
   post,
   generateStatus,
   onGenerate,
+  postLimitHit,
+  usage,
 }: GeneratorPanelProps) {
   const [direction, setDirection] = useState('')
 
@@ -41,10 +47,13 @@ export default function GeneratorPanel({
   }
 
   return (
-    <div style={{ flex: 1, height: '100%', minHeight: 0, display: 'flex', flexDirection: 'column', padding: '16px 24px', overflow: 'hidden' }}>
-      {/* Header: Generate + platform toggle */}
+    <div style={{ flex: 1, height: '100%', minHeight: 0, display: 'flex', flexDirection: 'column', padding: '16px 24px', overflow: 'hidden', position: 'relative' }}>
+      {/* Header: Generate + plan chip + platform toggle */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
-        <h2 style={{ fontSize: 14, fontWeight: 600, color: 'var(--text0)' }}>Generate</h2>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <h2 style={{ fontSize: 14, fontWeight: 600, color: 'var(--text0)' }}>Generate</h2>
+          <PlanChip usage={usage ?? null} />
+        </div>
 
         <div
           style={{
@@ -106,10 +115,11 @@ export default function GeneratorPanel({
         post={post}
         status={generateStatus}
         onRegenerate={handleSubmit}
+        postLimitHit={postLimitHit}
       />
 
       {/* Direction input */}
-      {selectedSignal && (
+      {selectedSignal && !postLimitHit && (
         <div style={{ display: 'flex', gap: 8, marginTop: 16 }}>
           <input
             type="text"
@@ -138,6 +148,9 @@ export default function GeneratorPanel({
           </button>
         </div>
       )}
+
+      {/* Shortcuts help */}
+      <ShortcutsHelp />
     </div>
   )
 }

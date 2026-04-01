@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server'
 import { auth } from '@clerk/nextjs/server'
 import { v4 as uuid } from 'uuid'
-import { getNicheConfig, getActiveNiche, getAccountIntelligence, savePost, getUserUsage, incrementUsage } from '@/lib/storage'
+import { getNicheConfig, getActiveNiche, getAccountIntelligence, savePost, getUserUsage, checkPostLimit, incrementPostUsage } from '@/lib/storage'
+import { LIMITS } from '@/lib/constants'
 import { runGenerate } from '@/lib/ai'
 import { buildPostPrompt } from '@/lib/prompts'
 import { extractJSON } from '@/lib/json'
@@ -12,13 +13,14 @@ export async function POST(request: Request) {
     const { userId } = await auth()
     if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-    // Check usage limits for free plan
+    // Check usage limits
     const usage = await getUserUsage()
-    if (usage.plan === 'free' && usage.postsGenerated >= 5) {
+    if (!checkPostLimit(usage)) {
       return NextResponse.json({
-        error: 'Free plan limit reached',
-        upgradeUrl: '/app/settings?upgrade=true',
-        limit: 5,
+        error: 'Monthly post limit reached',
+        limit: LIMITS.free.postsPerMonth,
+        message: 'Free plan includes 5 posts per month. Upgrade to Pro for unlimited posts.',
+        upgradeUrl: '/app/settings#upgrade',
       }, { status: 402 })
     }
 
@@ -79,7 +81,7 @@ export async function POST(request: Request) {
     }
 
     await savePost(post)
-    await incrementUsage('postsGenerated')
+    await incrementPostUsage()
     return NextResponse.json({ post })
   } catch (err) {
     console.error('[API] POST /api/generate error:', err)

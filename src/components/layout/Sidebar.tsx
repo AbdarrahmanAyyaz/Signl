@@ -1,8 +1,11 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { UserButton } from '@clerk/nextjs'
+import type { UsageRecord } from '@/lib/types'
+import { LIMITS } from '@/lib/constants'
 
 // SVG icons for sidebar nav
 function BriefIcon() {
@@ -45,6 +48,16 @@ const NAV_ITEMS = [
 
 export default function Sidebar() {
   const pathname = usePathname()
+  const [usage, setUsage] = useState<UsageRecord | null>(null)
+
+  useEffect(() => {
+    fetch('/api/usage').then(r => r.json()).then(d => setUsage(d.usage)).catch(() => {})
+  }, [])
+
+  const today = new Date().toISOString().slice(0, 10)
+  const currentMonth = `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}`
+  const briefsHit = usage?.plan === 'free' && usage.today === today && usage.briefsToday >= LIMITS.free.briefsPerDay
+  const postsHit = usage?.plan === 'free' && usage.month === currentMonth && usage.postsGenerated >= LIMITS.free.postsPerMonth
 
   return (
     <aside
@@ -113,6 +126,64 @@ export default function Sidebar() {
 
       {/* Spacer */}
       <div style={{ flex: 1 }} />
+
+      {/* Plan usage indicator */}
+      {usage && (
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, marginBottom: 8 }}>
+          <div style={{ width: 32, height: 1, background: 'var(--border)', marginBottom: 4 }} />
+          {usage.plan === 'pro' ? (
+            <span
+              className="font-mono"
+              style={{
+                fontSize: 10,
+                fontWeight: 500,
+                padding: '2px 8px',
+                borderRadius: 'var(--r-pill)',
+                background: 'var(--accent-soft)',
+                border: '1px solid var(--accent-border)',
+                color: 'var(--accent-text)',
+              }}
+            >
+              Pro
+            </span>
+          ) : (
+            <>
+              <span className="font-mono" style={{ fontSize: 10, color: 'var(--text2)' }}>Free</span>
+              <span
+                className="font-mono"
+                style={{
+                  fontSize: 10,
+                  color: briefsHit ? 'var(--signal-high)' : 'var(--text1)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 2,
+                }}
+              >
+                {LIMITS.free.briefsPerDay}/day
+                {briefsHit && (
+                  <a href="/app/settings#upgrade" style={{ color: 'var(--signal-high)', textDecoration: 'none', fontSize: 9 }}>↑</a>
+                )}
+              </span>
+              <span
+                className="font-mono"
+                style={{
+                  fontSize: 10,
+                  color: postsHit ? 'var(--signal-high)' : 'var(--text1)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 2,
+                }}
+              >
+                {LIMITS.free.postsPerMonth}/mo
+                {postsHit && (
+                  <a href="/app/settings#upgrade" style={{ color: 'var(--signal-high)', textDecoration: 'none', fontSize: 9 }}>↑</a>
+                )}
+              </span>
+            </>
+          )}
+          <div style={{ width: 32, height: 1, background: 'var(--border)', marginTop: 4 }} />
+        </div>
+      )}
 
       {/* User avatar */}
       <div style={{ paddingBottom: 16 }}>

@@ -1,6 +1,7 @@
 'use client'
 
 import type { Brief, BriefStatus, Signal, AccountIntelligence } from '@/lib/types'
+import { COPY } from '@/lib/copy'
 import SignalItem from './SignalItem'
 import EmptyBrief from './EmptyBrief'
 import LoadingSpinner from '../shared/LoadingSpinner'
@@ -14,6 +15,7 @@ interface BriefPanelProps {
   onSelectSignal: (signal: Signal) => void
   onRefresh: () => void
   accountIntel?: AccountIntelligence | null
+  briefLimitHit?: boolean
 }
 
 function timeAgo(dateStr: string): string {
@@ -35,6 +37,7 @@ export default function BriefPanel({
   onSelectSignal,
   onRefresh,
   accountIntel,
+  briefLimitHit,
 }: BriefPanelProps) {
   return (
     <div
@@ -52,7 +55,7 @@ export default function BriefPanel({
       <div style={{ padding: '16px 16px 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <h2 style={{ fontSize: 14, fontWeight: 600, color: 'var(--text0)' }}>Research brief</h2>
-          {status === 'ready' && (
+          {status === 'ready' && !briefLimitHit && (
             <span
               style={{
                 display: 'inline-flex',
@@ -67,6 +70,21 @@ export default function BriefPanel({
               }}
             >
               <span style={{ fontSize: 6 }}>●</span> live
+            </span>
+          )}
+          {briefLimitHit && (
+            <span
+              className="font-mono"
+              style={{
+                padding: '2px 8px',
+                borderRadius: 99,
+                background: '#f8717115',
+                border: '1px solid #f8717130',
+                color: 'var(--signal-high)',
+                fontSize: 10,
+              }}
+            >
+              limit hit
             </span>
           )}
         </div>
@@ -85,23 +103,25 @@ export default function BriefPanel({
         <span className="font-mono" style={{ fontSize: 12, color: 'var(--text1)' }}>
           {nicheName || 'No niche set'}
         </span>
-        <button
-          onClick={onRefresh}
-          disabled={status === 'loading'}
-          style={{
-            padding: '4px 12px',
-            background: 'var(--bg3)',
-            border: '1px solid var(--border)',
-            borderRadius: 99,
-            color: 'var(--text1)',
-            fontSize: 12,
-            fontWeight: 500,
-            opacity: status === 'loading' ? 0.5 : 1,
-            cursor: status === 'loading' ? 'not-allowed' : 'pointer',
-          }}
-        >
-          {status === 'loading' ? 'Scanning...' : 'Refresh'}
-        </button>
+        {!briefLimitHit && (
+          <button
+            onClick={onRefresh}
+            disabled={status === 'loading'}
+            style={{
+              padding: '4px 12px',
+              background: 'var(--bg3)',
+              border: '1px solid var(--border)',
+              borderRadius: 99,
+              color: 'var(--text1)',
+              fontSize: 12,
+              fontWeight: 500,
+              opacity: status === 'loading' ? 0.5 : 1,
+              cursor: status === 'loading' ? 'not-allowed' : 'pointer',
+            }}
+          >
+            {status === 'loading' ? 'Scanning...' : 'Refresh'}
+          </button>
+        )}
       </div>
 
       {/* Account intelligence indicator */}
@@ -122,6 +142,46 @@ export default function BriefPanel({
 
       {/* Content */}
       <div style={{ flex: 1, overflow: 'auto', padding: '8px 8px' }}>
+        {/* Brief limit hit state */}
+        {briefLimitHit && brief && (
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, padding: '32px 16px', textAlign: 'center' }}>
+            <p style={{ fontSize: 13, fontWeight: 500, color: 'var(--text0)' }}>
+              {COPY.limits.briefHit.title}
+            </p>
+            <p style={{ fontSize: 12, color: 'var(--text2)', lineHeight: 1.6 }}>
+              {COPY.limits.briefHit.body}
+            </p>
+            <a
+              href="/app/settings#upgrade"
+              style={{
+                marginTop: 4,
+                padding: '8px 16px',
+                background: 'var(--accent)',
+                borderRadius: 8,
+                color: '#0f0d0b',
+                fontSize: 13,
+                fontWeight: 600,
+                textDecoration: 'none',
+              }}
+            >
+              {COPY.limits.briefHit.cta}
+            </a>
+            <button
+              onClick={() => {/* Parent can handle switching back to brief view */}}
+              style={{
+                padding: '6px 12px',
+                background: 'transparent',
+                border: 'none',
+                color: 'var(--text2)',
+                fontSize: 12,
+                cursor: 'pointer',
+              }}
+            >
+              {COPY.limits.briefHit.secondary}
+            </button>
+          </div>
+        )}
+
         {status === 'loading' && (
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16, padding: '32px 16px', textAlign: 'center' }}>
             <LoadingSpinner size={24} />
@@ -134,7 +194,7 @@ export default function BriefPanel({
           <EmptyBrief nicheName={nicheName} onRefreshNow={onRefresh} />
         )}
 
-        {status === 'ready' && brief && (
+        {status === 'ready' && brief && !briefLimitHit && (
           <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
             {brief.signals.map(signal => (
               <SignalItem
@@ -171,7 +231,7 @@ export default function BriefPanel({
       </div>
 
       {/* Footer */}
-      {brief && status === 'ready' && (
+      {brief && status === 'ready' && !briefLimitHit && (
         <div style={{ padding: '10px 16px', borderTop: '1px solid var(--border)' }}>
           <span className="font-mono" style={{ fontSize: 11, color: 'var(--text2)' }}>
             Updated {timeAgo(brief.refreshedAt)}

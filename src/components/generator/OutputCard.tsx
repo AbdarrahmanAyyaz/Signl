@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import type { GeneratedPost, GenerateStatus } from '@/lib/types'
+import { COPY } from '@/lib/copy'
 import AlgoAudit from './AlgoAudit'
 import LoadingSpinner from '../shared/LoadingSpinner'
 
@@ -9,9 +10,22 @@ interface OutputCardProps {
   post: GeneratedPost | null
   status: GenerateStatus
   onRegenerate: () => void
+  postLimitHit?: boolean
 }
 
-export default function OutputCard({ post, status, onRegenerate }: OutputCardProps) {
+function getResetDate(): string {
+  const d = new Date()
+  return new Date(d.getFullYear(), d.getMonth() + 1, 1)
+    .toLocaleDateString('en-GB', { day: 'numeric', month: 'long' })
+}
+
+function getDaysUntilReset(): number {
+  const now = new Date()
+  const reset = new Date(now.getFullYear(), now.getMonth() + 1, 1)
+  return Math.ceil((reset.getTime() - now.getTime()) / (1000 * 60 * 60 * 24))
+}
+
+export default function OutputCard({ post, status, onRegenerate, postLimitHit }: OutputCardProps) {
   const [copied, setCopied] = useState(false)
 
   const handleCopy = async () => {
@@ -19,6 +33,51 @@ export default function OutputCard({ post, status, onRegenerate }: OutputCardPro
     await navigator.clipboard.writeText(post.content)
     setCopied(true)
     setTimeout(() => setCopied(false), 1600)
+  }
+
+  // Post limit hit
+  if (postLimitHit) {
+    const resetDate = getResetDate()
+    const daysLeft = getDaysUntilReset()
+    return (
+      <div
+        style={{
+          flex: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 12,
+          padding: '40px 24px',
+          textAlign: 'center',
+        }}
+      >
+        <p style={{ fontSize: 14, fontWeight: 500, color: 'var(--text0)' }}>
+          {COPY.limits.postHit.title}
+        </p>
+        <p style={{ fontSize: 12, color: 'var(--text2)', lineHeight: 1.6 }}>
+          {COPY.limits.postHit.body(resetDate, 23)}
+        </p>
+        <a
+          href="/app/settings#upgrade"
+          style={{
+            marginTop: 8,
+            padding: '10px 20px',
+            background: 'var(--accent)',
+            borderRadius: 8,
+            color: '#0f0d0b',
+            fontSize: 13,
+            fontWeight: 600,
+            textDecoration: 'none',
+          }}
+        >
+          {COPY.limits.postHit.cta}
+        </a>
+        <p className="font-mono" style={{ fontSize: 11, color: 'var(--text2)', marginTop: 4 }}>
+          or wait {daysLeft} day{daysLeft !== 1 ? 's' : ''} until your limit resets
+        </p>
+      </div>
+    )
   }
 
   // Idle — no signal selected
@@ -155,18 +214,36 @@ export default function OutputCard({ post, status, onRegenerate }: OutputCardPro
             )}
           </div>
 
-          {/* Bottom bar */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0 }}>
-            <span className="font-mono" style={{ fontSize: 11, color: 'var(--text2)' }}>
-              {post.charCount} chars
-            </span>
-
+          {/* Action buttons — Copy and Regenerate at equal prominence */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8, flexShrink: 0 }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <span className="font-mono" style={{ fontSize: 11, color: 'var(--text2)' }}>
+                {post.charCount} chars
+              </span>
+            </div>
             <div style={{ display: 'flex', gap: 8 }}>
+              <button
+                onClick={handleCopy}
+                style={{
+                  flex: 1,
+                  padding: '10px 20px',
+                  background: copied ? 'var(--green-soft)' : 'var(--accent)',
+                  border: copied ? '1px solid #4ade8022' : 'none',
+                  borderRadius: 8,
+                  color: copied ? 'var(--green)' : '#0f0d0b',
+                  fontSize: 13,
+                  fontWeight: 600,
+                  transition: 'all 0.15s',
+                }}
+              >
+                {copied ? 'Copied ✓' : 'Copy post'}
+              </button>
               <button
                 onClick={onRegenerate}
                 style={{
-                  padding: '8px 16px',
-                  background: 'transparent',
+                  flex: 1,
+                  padding: '10px 20px',
+                  background: 'var(--bg3)',
                   border: '1px solid var(--border)',
                   borderRadius: 8,
                   color: 'var(--text1)',
@@ -174,21 +251,7 @@ export default function OutputCard({ post, status, onRegenerate }: OutputCardPro
                   fontWeight: 500,
                 }}
               >
-                Regenerate
-              </button>
-              <button
-                onClick={handleCopy}
-                style={{
-                  padding: '8px 20px',
-                  background: 'var(--accent)',
-                  border: 'none',
-                  borderRadius: 8,
-                  color: '#0f0d0b',
-                  fontSize: 13,
-                  fontWeight: 600,
-                }}
-              >
-                {copied ? 'Copied ✓' : 'Copy post'}
+                Regenerate ↺
               </button>
             </div>
           </div>

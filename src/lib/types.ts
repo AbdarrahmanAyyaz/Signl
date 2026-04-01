@@ -110,3 +110,12 @@ export interface GenerateRequest {
   direction?: string
   nicheId: string
 }
+
+export interface UsageRecord {
+  month: string           // e.g. "2026-03" — for post tracking
+  postsGenerated: number
+  today: string           // e.g. "2026-03-23" — for brief tracking
+  briefsToday: number
+  plan: 'free' | 'pro'
+  hasSeenPlanIntro: boolean
+}
