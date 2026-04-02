@@ -3,7 +3,7 @@ builder = "NIXPACKS"
 nixpacksConfigPath = "nixpacks.toml"
 
 [deploy]
-startCommand = "node_modules/.bin/next start"
+startCommand = "node_modules/.bin/next start -p ${PORT:-3000}"
 healthcheckPath = "/api/health"
 healthcheckTimeout = 300
 restartPolicyType = "ON_FAILURE"
