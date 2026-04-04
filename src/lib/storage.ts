@@ -1,4 +1,6 @@
-import { kv } from '@vercel/kv'
+import { Redis } from '@upstash/redis'
+
+const kv = Redis.fromEnv()
 import { auth } from '@clerk/nextjs/server'
 import type {
   NicheConfig, Niche, Brief, GeneratedPost,
