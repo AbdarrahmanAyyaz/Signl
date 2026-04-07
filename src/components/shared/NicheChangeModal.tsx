@@ -18,7 +18,8 @@ export default function NicheChangeModal({
       <div
         className="fade-in"
         style={{
-          width: 300,
+          width: '90%',
+          maxWidth: 300,
           background: 'var(--bg2)',
           border: '1px solid var(--border)',
           borderRadius: 12,

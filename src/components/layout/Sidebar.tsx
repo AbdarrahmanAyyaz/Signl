@@ -60,19 +60,7 @@ export default function Sidebar() {
   const postsHit = usage?.plan === 'free' && usage.month === currentMonth && usage.postsGenerated >= LIMITS.free.postsPerMonth
 
   return (
-    <aside
-      style={{
-        width: 56,
-        height: '100vh',
-        background: 'var(--bg1)',
-        borderRight: '1px solid var(--border)',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        paddingTop: 16,
-        gap: 4,
-        flexShrink: 0,
-      }}
+    <aside className="app-sidebar"
     >
       {/* Logo */}
       <div

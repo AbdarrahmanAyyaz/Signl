@@ -16,6 +16,7 @@ interface BriefPanelProps {
   onRefresh: () => void
   accountIntel?: AccountIntelligence | null
   briefLimitHit?: boolean
+  mobileHidden?: boolean
 }
 
 function timeAgo(dateStr: string): string {
@@ -38,18 +39,10 @@ export default function BriefPanel({
   onRefresh,
   accountIntel,
   briefLimitHit,
+  mobileHidden,
 }: BriefPanelProps) {
   return (
-    <div
-      style={{
-        width: 300,
-        height: '100%',
-        borderRight: '1px solid var(--border)',
-        display: 'flex',
-        flexDirection: 'column',
-        background: 'var(--bg1)',
-        flexShrink: 0,
-      }}
+    <div className={`brief-panel${mobileHidden ? ' mobile-hidden' : ''}`}
     >
       {/* Header */}
       <div style={{ padding: '16px 16px 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>

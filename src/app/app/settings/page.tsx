@@ -160,7 +160,7 @@ export default function SettingsPage() {
   }
 
   return (
-    <div style={{ flex: 1, overflow: 'auto', padding: '32px 40px', maxWidth: 640 }}>
+    <div className="page-content" style={{ maxWidth: 640 }}>
       <h1 style={{ fontSize: 18, fontWeight: 600, color: 'var(--text0)', marginBottom: 24 }}>
         Settings
       </h1>
@@ -233,11 +233,11 @@ export default function SettingsPage() {
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 16 }}>
               <div className="font-mono" style={{ fontSize: 12, color: 'var(--text1)', display: 'flex', gap: 8 }}>
-                <span style={{ color: 'var(--text2)', width: 140 }}>Research briefs</span>
+                <span style={{ color: 'var(--text2)', minWidth: 120, flexShrink: 0 }}>Research briefs</span>
                 <span>{LIMITS.free.briefsPerDay} per day</span>
               </div>
               <div className="font-mono" style={{ fontSize: 12, color: 'var(--text1)', display: 'flex', gap: 8 }}>
-                <span style={{ color: 'var(--text2)', width: 140 }}>Posts</span>
+                <span style={{ color: 'var(--text2)', minWidth: 120, flexShrink: 0 }}>Posts</span>
                 <span>{LIMITS.free.postsPerMonth} per month</span>
               </div>
             </div>
@@ -416,7 +416,7 @@ export default function SettingsPage() {
         </div>
 
         {accountIntel && (
-          <p style={{ fontSize: 12, color: 'var(--text2)', marginTop: 12, display: 'flex', alignItems: 'center', gap: 8 }}>
+          <p style={{ fontSize: 12, color: 'var(--text2)', marginTop: 12, display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
             Last analysed: {new Date(accountIntel.scrapedAt).toLocaleDateString()}
             <button
               onClick={() => fetch('/api/profile', { method: 'POST' }).then(() => window.location.reload())}

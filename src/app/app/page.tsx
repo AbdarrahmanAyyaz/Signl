@@ -31,6 +31,7 @@ export default function Home() {
   const [postLimitHit, setPostLimitHit] = useState(false)
   const [briefLimitHit, setBriefLimitHit] = useState(false)
   const [showPlanIntro, setShowPlanIntro] = useState(false)
+  const [mobileView, setMobileView] = useState<'brief' | 'generate'>('brief')
 
   // Load niche config + latest brief on mount
   useEffect(() => {
@@ -225,20 +226,39 @@ export default function Home() {
 
   return (
     <>
-      <div style={{ position: 'relative' }}>
+      {/* Mobile view tabs */}
+      <div className="mobile-view-tabs">
+        <button
+          className={mobileView === 'brief' ? 'active' : ''}
+          onClick={() => setMobileView('brief')}
+        >
+          Research Brief
+        </button>
+        <button
+          className={mobileView === 'generate' ? 'active' : ''}
+          onClick={() => setMobileView('generate')}
+        >
+          Generate
+        </button>
+      </div>
+
+      <div style={{ position: 'relative' }} className={mobileView !== 'brief' ? 'mobile-hidden' : ''}>
         <BriefPanel
           brief={brief}
           status={briefStatus}
           nicheName={niche?.name}
           selectedSignal={selectedSignal}
-          onSelectSignal={setSelectedSignal}
+          onSelectSignal={(signal) => {
+            setSelectedSignal(signal)
+            setMobileView('generate')
+          }}
           onRefresh={handleRefresh}
           accountIntel={accountIntel}
           briefLimitHit={briefLimitHit}
         />
 
         {/* Plan intro card — overlays the brief panel */}
-        {showPlanIntro && (
+        {showPlanIntro && mobileView === 'brief' && (
           <PlanIntroCard
             onUpgrade={() => {
               handleDismissPlanIntro()
@@ -260,6 +280,7 @@ export default function Home() {
         onGenerate={handleGenerate}
         postLimitHit={postLimitHit}
         usage={usage}
+        mobileHidden={mobileView !== 'generate'}
       />
     </>
   )

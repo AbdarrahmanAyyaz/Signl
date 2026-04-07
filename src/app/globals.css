@@ -168,6 +168,8 @@ button {
   align-items: center;
   justify-content: center;
   gap: 24px;
+  padding: 24px 16px;
+  overflow-y: auto;
 }
 .auth-logo {
   font-size: 20px;
@@ -176,3 +178,188 @@ button {
   letter-spacing: -0.02em;
 }
 .auth-logo span { color: var(--accent); }
+
+/* ------------------------------------------------------------------ */
+/*  Responsive — App Layout                                            */
+/* ------------------------------------------------------------------ */
+
+/* Desktop sidebar */
+.app-sidebar {
+  width: 56px;
+  height: 100vh;
+  background: var(--bg1);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 16px;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+/* Mobile bottom nav — hidden on desktop */
+.app-bottom-nav {
+  display: none;
+}
+
+/* Brief panel */
+.brief-panel {
+  width: 300px;
+  height: 100%;
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  background: var(--bg1);
+  flex-shrink: 0;
+}
+
+/* Generator panel */
+.generator-panel {
+  flex: 1;
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 16px 24px;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Mobile tab bar — hidden on desktop */
+.mobile-view-tabs {
+  display: none;
+}
+
+/* Page content (history, settings) */
+.page-content {
+  flex: 1;
+  overflow: auto;
+  padding: 32px 40px;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Mobile breakpoint (768px)                                          */
+/* ------------------------------------------------------------------ */
+
+@media (max-width: 768px) {
+  html, body {
+    overflow: auto;
+  }
+
+  /* Hide sidebar on mobile */
+  .app-sidebar {
+    display: none !important;
+  }
+
+  /* Show bottom nav on mobile */
+  .app-bottom-nav {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 56px;
+    background: var(--bg1);
+    border-top: 1px solid var(--border);
+    align-items: center;
+    justify-content: space-around;
+    padding: 0 8px;
+    z-index: 50;
+  }
+  .app-bottom-nav a,
+  .app-bottom-nav button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 6px 12px;
+    background: none;
+    border: none;
+    border-radius: 8px;
+    color: var(--text2);
+    text-decoration: none;
+    font-size: 10px;
+    font-family: 'Geist', system-ui, sans-serif;
+    cursor: pointer;
+    transition: color 0.15s;
+  }
+  .app-bottom-nav a.active,
+  .app-bottom-nav button.active {
+    color: var(--accent);
+  }
+
+  /* App shell: vertical layout with bottom padding for nav */
+  .app-shell {
+    flex-direction: column !important;
+    height: auto !important;
+    min-height: 100vh;
+    padding-bottom: 56px;
+  }
+  .app-shell > main {
+    flex-direction: column !important;
+    overflow: auto !important;
+    min-height: calc(100vh - 56px);
+  }
+
+  /* Brief panel: full width on mobile */
+  .brief-panel {
+    width: 100% !important;
+    height: auto !important;
+    border-right: none !important;
+    border-bottom: 1px solid var(--border);
+    max-height: none;
+    flex-shrink: 0;
+  }
+
+  /* Generator panel: adjusted padding on mobile */
+  .generator-panel {
+    padding: 16px !important;
+    overflow: auto !important;
+    min-height: 0;
+  }
+
+  /* Show mobile view tabs */
+  .mobile-view-tabs {
+    display: flex;
+    background: var(--bg1);
+    border-bottom: 1px solid var(--border);
+    padding: 8px;
+    gap: 4px;
+    position: sticky;
+    top: 0;
+    z-index: 20;
+  }
+  .mobile-view-tabs button {
+    flex: 1;
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text2);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: 'Geist', system-ui, sans-serif;
+  }
+  .mobile-view-tabs button.active {
+    background: var(--accent-soft);
+    border-color: var(--accent-border);
+    color: var(--accent-text);
+  }
+
+  /* Hide elements based on mobile view state */
+  .mobile-hidden {
+    display: none !important;
+  }
+
+  /* Page content: tighter padding on mobile */
+  .page-content {
+    padding: 20px 16px !important;
+    max-width: 100% !important;
+  }
+
+  /* Auth page responsive */
+  .auth-page {
+    padding: 24px 16px;
+  }
+}

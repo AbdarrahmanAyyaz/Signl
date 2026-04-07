@@ -18,6 +18,7 @@ interface GeneratorPanelProps {
   onGenerate: (direction: string) => void
   postLimitHit?: boolean
   usage?: UsageRecord | null
+  mobileHidden?: boolean
 }
 
 export default function GeneratorPanel({
@@ -31,6 +32,7 @@ export default function GeneratorPanel({
   onGenerate,
   postLimitHit,
   usage,
+  mobileHidden,
 }: GeneratorPanelProps) {
   const [direction, setDirection] = useState('')
 
@@ -47,7 +49,7 @@ export default function GeneratorPanel({
   }
 
   return (
-    <div style={{ flex: 1, height: '100%', minHeight: 0, display: 'flex', flexDirection: 'column', padding: '16px 24px', overflow: 'hidden', position: 'relative' }}>
+    <div className={`generator-panel${mobileHidden ? ' mobile-hidden' : ''}`}>
       {/* Header: Generate + plan chip + platform toggle */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>

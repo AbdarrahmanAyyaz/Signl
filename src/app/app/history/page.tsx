@@ -32,7 +32,7 @@ export default function HistoryPage() {
   }
 
   return (
-    <div style={{ flex: 1, overflow: 'auto', padding: '32px 40px', maxWidth: 700 }}>
+    <div className="page-content" style={{ maxWidth: 700 }}>
       <h1 style={{ fontSize: 18, fontWeight: 600, color: 'var(--text0)', marginBottom: 20 }}>
         Post history
       </h1>
