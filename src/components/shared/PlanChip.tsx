@@ -56,7 +56,7 @@ export default function PlanChip({ usage }: PlanChipProps) {
           cursor: 'pointer',
         }}
       >
-        {anyHit ? 'Limit reached' : 'Free ↑'}
+        {postsHit && briefsHit ? 'Limits reached' : postsHit ? 'Post limit' : briefsHit ? 'Brief limit' : 'Free ↑'}
       </a>
 
       {showTooltip && (
