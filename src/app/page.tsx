@@ -130,16 +130,6 @@ export default function LandingPage() {
             >
               Pricing
             </a>
-            <a
-              href="https://github.com/AbdarrahmanAyyaz/Signl"
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{ cursor: 'pointer', transition: 'color 0.15s' }}
-              onMouseEnter={e => (e.currentTarget.style.color = 'var(--text0)')}
-              onMouseLeave={e => (e.currentTarget.style.color = 'var(--text1)')}
-            >
-              GitHub
-            </a>
           </div>
 
           {/* CTA */}
@@ -1269,16 +1259,6 @@ What app did you quit last?`}
                 onMouseLeave={e => (e.currentTarget.style.color = 'var(--text1)')}
               >
                 Pricing
-              </a>
-              <a
-                href="https://github.com/AbdarrahmanAyyaz/Signl"
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{ cursor: 'pointer', transition: 'color 0.15s' }}
-                onMouseEnter={e => (e.currentTarget.style.color = 'var(--text0)')}
-                onMouseLeave={e => (e.currentTarget.style.color = 'var(--text1)')}
-              >
-                GitHub
               </a>
               <Link
                 href="/sign-in"

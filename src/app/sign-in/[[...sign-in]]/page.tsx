@@ -7,6 +7,7 @@ export default function SignInPage() {
         open<span>signl</span>
       </div>
       <SignIn
+        forceRedirectUrl="/app"
         appearance={{
           variables: {
             colorPrimary: '#fb923c',
