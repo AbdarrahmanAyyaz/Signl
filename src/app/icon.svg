@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="102" fill="#fb923c"/>
+  <!-- Signal strength bars — 4 bars, bottom-aligned, increasing height -->
+  <rect x="112" y="344" width="58" height="44" rx="16" fill="white"/>
+  <rect x="198" y="280" width="58" height="108" rx="16" fill="white"/>
+  <rect x="284" y="210" width="58" height="178" rx="16" fill="white"/>
+  <rect x="370" y="140" width="58" height="248" rx="16" fill="white"/>
+</svg>

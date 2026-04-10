@@ -878,7 +878,7 @@ What app did you quit last?`}
             <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 28px', flex: 1 }}>
               {[
                 '5 posts / month',
-                '3 research briefs / month',
+                '2 research briefs / day',
                 'X + LinkedIn',
                 'Voice profile',
               ].map((item, i) => (
@@ -1121,7 +1121,7 @@ What app did you quit last?`}
           },
           {
             q: "What's on the free plan?",
-            a: "5 generated posts and 3 research briefs per month. No card required. Upgrade to Pro anytime for unlimited usage and daily automated briefs.",
+            a: "5 generated posts and 2 research briefs per day. No card required. Upgrade to Pro anytime for unlimited usage and daily automated briefs.",
           },
         ].map((item, i) => (
           <div
@@ -1222,9 +1222,7 @@ What app did you quit last?`}
                 maxWidth: 260,
               }}
             >
-              Research-grounded content
-              <br />
-              for founders.
+              Research-backed content, instantly.
             </div>
             <div
               style={{

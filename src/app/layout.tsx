@@ -14,11 +14,11 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'Opensignl — Research-grounded content for founders',
+  title: 'Opensignl — Research-backed content, instantly',
   description: 'Opensignl scans Reddit, X, and LinkedIn daily to find what your niche is actually talking about — then generates platform-native posts that perform. Not AI slop. Real signal.',
   openGraph: {
     title: 'Opensignl',
-    description: "Research-grounded content for founders who'd rather be known than followed.",
+    description: "Research-backed content, instantly.",
     url: 'https://opensignl.com',
     siteName: 'Opensignl',
     type: 'website',
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Opensignl',
-    description: 'Research-grounded content for founders.',
+    description: 'Research-backed content, instantly.',
   },
 }
 

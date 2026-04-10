@@ -74,7 +74,10 @@ export async function POST(req: NextRequest) {
               </p>
               <ol style="margin: 0; padding-left: 20px; font-size: 14px; color: #555; line-height: 1.8;">
                 <li>Reply to ${escapeHtml(userEmail)} with a payment link</li>
-                <li>Once paid, run: <code>UPDATE usage SET plan='pro' WHERE user_id='${escapeHtml(userId)}'</code></li>
+                <li>Once paid, update their plan in Upstash Redis:<br>
+                  <code style="display: inline-block; margin-top: 4px; padding: 4px 8px; background: #e8e8e8; border-radius: 4px; font-size: 12px;">SET user:${escapeHtml(userId)}:usage</code><br>
+                  <span style="font-size: 12px; color: #888;">Set the "plan" field to "pro"</span>
+                </li>
                 <li>Reply to confirm access</li>
               </ol>
             </div>
@@ -90,24 +93,47 @@ export async function POST(req: NextRequest) {
       resend.emails.send({
         from: process.env.RESEND_FROM!,
         to: userEmail,
-        subject: 'Your Opensignl Pro request',
+        subject: 'Your Opensignl Pro upgrade',
         html: `
-          <div style="font-family: system-ui, sans-serif; max-width: 480px; padding: 24px;">
-            <h2 style="margin: 0 0 8px; font-size: 18px;">Got your request</h2>
-            <p style="color: #555; line-height: 1.6;">
+          <div style="font-family: system-ui, sans-serif; max-width: 520px; margin: 0 auto; padding: 32px 24px;">
+            <div style="margin-bottom: 32px;">
+              <span style="font-size: 20px; font-weight: 700; color: #111;">opensignl</span>
+            </div>
+
+            <h2 style="margin: 0 0 16px; font-size: 22px; color: #111; font-weight: 600;">
+              You're upgrading to Pro
+            </h2>
+
+            <p style="color: #444; line-height: 1.7; font-size: 15px; margin: 0 0 16px;">
               Hi ${escapeHtml(user?.firstName ?? 'there')},
             </p>
-            <p style="color: #555; line-height: 1.6;">
-              I'll send you a payment link within a few hours. Once you're set up
-              on Pro you'll get unlimited posts, daily auto-briefs, and everything
-              else straight away.
+
+            <p style="color: #444; line-height: 1.7; font-size: 15px; margin: 0 0 16px;">
+              Thanks for requesting a Pro upgrade. I'll send you a payment link
+              within a few hours.
             </p>
-            <p style="color: #555; line-height: 1.6;">
-              If you have any questions just reply to this email.
+
+            <div style="margin: 24px 0; padding: 20px; background: #fef7f0; border-left: 3px solid #fb923c; border-radius: 0 8px 8px 0;">
+              <p style="margin: 0 0 12px; font-size: 14px; font-weight: 600; color: #111;">
+                What you'll get with Pro:
+              </p>
+              <ul style="margin: 0; padding-left: 18px; font-size: 14px; color: #555; line-height: 2;">
+                <li>Unlimited post generation</li>
+                <li>Unlimited daily research briefs</li>
+                <li>Priority support</li>
+              </ul>
+            </div>
+
+            <p style="color: #444; line-height: 1.7; font-size: 15px; margin: 0 0 16px;">
+              Once payment is confirmed, your account will be upgraded immediately.
+              If you have any questions, just reply to this email.
             </p>
-            <p style="color: #555; line-height: 1.6; margin-top: 24px;">
-              — Abdarrahman<br>
-              <span style="color: #999; font-size: 13px;">Opensignl</span>
+
+            <hr style="border: none; border-top: 1px solid #eee; margin: 32px 0 16px;" />
+
+            <p style="color: #999; font-size: 13px; line-height: 1.5; margin: 0;">
+              Abdarrahman &middot; Opensignl<br>
+              <a href="https://opensignl.com" style="color: #fb923c; text-decoration: none;">opensignl.com</a>
             </p>
           </div>
         `,
