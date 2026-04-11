@@ -36,7 +36,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <ClerkProvider>
+    <ClerkProvider signInForceRedirectUrl="/app" signUpForceRedirectUrl="/onboarding">
       <html lang="en">
         <body className={`${geistSans.variable} ${geistMono.variable}`}>
           <script

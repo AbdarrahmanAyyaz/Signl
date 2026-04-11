@@ -7,6 +7,7 @@ export default function SignUpPage() {
         open<span>signl</span>
       </div>
       <SignUp
+        forceRedirectUrl="/onboarding"
         appearance={{
           variables: {
             colorPrimary: '#fb923c',
