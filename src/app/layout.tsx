@@ -39,6 +39,11 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en">
         <body className={`${geistSans.variable} ${geistMono.variable}`}>
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `(function(){var u=navigator.userAgent;if(u.includes('LinkedInApp')&&u.includes('Mobile')&&(u.includes('iPhone')||u.includes('iPad'))){window.location.href='x-safari-'+window.location.href}})()`,
+            }}
+          />
           {children}
         </body>
       </html>
